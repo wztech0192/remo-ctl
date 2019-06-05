@@ -1,10 +1,54 @@
+
+html{
+  height:100%;
+}
+
 body {
-  margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
     "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #fafafa;
+  margin:0;
+  height:100%;
+  
+}
+
+
+#header{
+  min-height:30px;
+}
+
+.cmd fieldset{
+  border-top-left-radius: 0 !important;
+    border-top-right-radius: 0 !important;
+}
+
+
+#root{
+  height:100%;
+}
+
+.App{
+  padding:10px;
+  max-width: 500px;
+  margin: 0 auto;
+  height:calc(100% - 20px);
+}
+
+.box {
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+}
+
+.box .row.header {
+  flex: 0 1 auto;
+}
+
+.box .row.content {
+  flex: 1 1 auto;
 }
 
 code {
