@@ -89,12 +89,7 @@ class ActionGroup extends Component {
 
         <div style={{ float: 'right' }}>
           {this.custBtn.map(btn => (
-            <Tooltip
-              key={btn.title}
-              disableFocusListener
-              disableTouchListener
-              title={btn.title}
-            >
+            <Tooltip key={btn.title} title={btn.title}>
               <IconButton>{btn.Icon}</IconButton>
             </Tooltip>
           ))}

@@ -7,6 +7,9 @@ import CmdInput from './Components/CmdInput';
 import ActionGroup from './Components/ActionGroup';
 import Grow from '@material-ui/core/Grow';
 import Controller from './Components/Controller';
+import Grid from '@material-ui/core/Grid';
+import LeftArrow from '@material-ui/icons/ArrowLeft';
+import RightArrow from '@material-ui/icons/ArrowRight';
 
 const port = ':1998/';
 let ws = null;
@@ -15,8 +18,17 @@ class App extends Component {
   state = {
     isConnected: false,
     loading: false,
-    open: false
+    open: false,
+    showLeft: true,
+    showRight: true,
+    isLandscape: window.orientation === 90
   };
+
+  componentDidMount() {
+    window.addEventListener('orientationchange', () => {
+      this.setState({ isLandscape: window.orientation === 90 });
+    });
+  }
 
   makeConnection = ip => {
     this.setState({ loading: true });
@@ -47,10 +59,8 @@ class App extends Component {
             //toggleConn(lblConn, data[1]);
             this.setState({ isConnected: data[1] === 'ON' });
             break;
-          case 'cmd':
-          case 'b':
+          default:
             if (data[1]) this.output(data[1]);
-            break;
         }
       }
     };
@@ -65,7 +75,6 @@ class App extends Component {
     this.setState(state => ({
       output: (state.output ? state.output + '\n' : '') + msg
     }));
-    console.log(this.state.output);
   };
 
   toggleModal = () => {
@@ -78,22 +87,70 @@ class App extends Component {
     }
   };
 
+  landscapeHide = type => {
+    const indicator = 'show' + type;
+    return (
+      <Grid
+        item
+        onClick={() => {
+          this.setState(state => ({ [indicator]: !state[indicator] }));
+        }}
+        style={{
+          boxShadow: 'inset 0 0 20px 0px lightgray',
+          margin: '0 10px',
+          borderRadius: '50%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          ['margin' + type]: -20
+        }}
+      >
+        {type === 'Left' ? (
+          <React.Fragment>
+            &nbsp;
+            {this.state.showLeft ? <LeftArrow /> : <RightArrow />}
+          </React.Fragment>
+        ) : (
+          <React.Fragment>
+            {this.state.showRight ? <RightArrow /> : <LeftArrow />}
+            &nbsp;
+          </React.Fragment>
+        )}
+      </Grid>
+    );
+  };
+
   render() {
     return (
       <div className="App">
         {this.state.isConnected ? (
           <Grow in={true} mountOnEnter unmountOnExit>
-            <div className="box">
-              <div className="row header">
-                <Header isConnected={this.state.isConnected} />
-                <Output output={this.state.output} />
-                <ActionGroup send={this.send} output={this.output} />
-                <CmdInput send={this.send} output={this.output} />
-              </div>
-              <div className="row content">
-                <Controller send={this.send} />
-              </div>
-            </div>
+            <Grid
+              container
+              direction={this.state.isLandscape ? 'row' : 'column'}
+              alignItems="stretch"
+              spacing={0}
+              style={{ height: '100%' }}
+            >
+              {this.state.isLandscape && this.landscapeHide('Left')}
+
+              {(!this.state.isLandscape || this.state.showLeft) && (
+                <Grid item xs={this.state.isLandscape}>
+                  <Header isConnected={this.state.isConnected} />
+                  <Output output={this.state.output} />
+                  <ActionGroup send={this.send} output={this.output} />
+                  <CmdInput send={this.send} output={this.output} />
+                </Grid>
+              )}
+
+              {(!this.state.isLandscape || this.state.showRight) && (
+                <Grid item xs>
+                  <Controller send={this.send} />
+                </Grid>
+              )}
+
+              {this.state.isLandscape && this.landscapeHide('Right')}
+            </Grid>
           </Grow>
         ) : (
           <Main

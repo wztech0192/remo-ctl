@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import Fab from '@material-ui/core/Fab';
-import Grid from '@material-ui/core/Grid';
 import LinkIcon from '@material-ui/icons/Link';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
@@ -71,7 +69,7 @@ class Main extends Component {
     return (
       <React.Fragment>
         <Typography variant="h3" align="center" className={classes.header}>
-          Remo CRT
+          Remo CTL
         </Typography>
         <TextField
           align="center"
@@ -85,12 +83,7 @@ class Main extends Component {
           margin="normal"
           fullWidth
         />
-        <Fab
-          color="primary"
-          size="large"
-          className={classes.btn}
-          onClick={this.makeConnection}
-        >
+        <Fab size="large" className={classes.btn} onClick={this.makeConnection}>
           <LinkIcon style={{ fontSize: 60 }} />
           {loading && (
             <CircularProgress size={160} className={classes.fabProgress} />
