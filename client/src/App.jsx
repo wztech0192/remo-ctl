@@ -10,9 +10,28 @@ import Controller from './Components/Controller';
 import Grid from '@material-ui/core/Grid';
 import LeftArrow from '@material-ui/icons/ArrowLeft';
 import RightArrow from '@material-ui/icons/ArrowRight';
+import Cookies from 'universal-cookie';
 
-const port = ':1998/';
+const cookies = new Cookies();
+
 let ws = null;
+
+const getSpeed = (strVal, defaultSpeed) => {
+  if (strVal === undefined || strVal === null || strVal === '') {
+    return defaultSpeed;
+  }
+  try {
+    return parseInt(strVal);
+  } catch {
+    return defaultSpeed;
+  }
+};
+
+const config = {
+  mouseSpeed: getSpeed(cookies.get('mouseSpeed'), 4),
+  motionSpeed: getSpeed(cookies.get('motionSpeed'), 10),
+  scrollSpeed: getSpeed(cookies.get('scrollSpeed'), 10)
+};
 
 class App extends Component {
   state = {
@@ -21,7 +40,10 @@ class App extends Component {
     open: false,
     showLeft: true,
     showRight: true,
-    isLandscape: window.orientation === 90
+    isLandscape: window.orientation === 90,
+    offline: false,
+    drawerOpen: false,
+    fullScreen: false
   };
 
   componentDidMount() {
@@ -31,22 +53,24 @@ class App extends Component {
   }
 
   makeConnection = ip => {
-    this.setState({ loading: true });
-    ws = new WebSocket('ws://' + ip + port);
-    this.startConn();
+    if (ip.toLowerCase() === 'offline') {
+      this.setState({ offline: true });
+    } else {
+      this.setState({ loading: true });
+      ws = new WebSocket('ws://' + ip);
+      this.startConn();
+    }
   };
 
   startConn = () => {
     //start handshake
     ws.onopen = e => {
       this.output('connected!');
-
       this.setState({ isConnected: true, loading: false });
     }; //on open event
 
     ws.onclose = () => {
       this.output('disconnected!');
-      console.log('disconnected');
       this.setState({ isConnected: false, loading: false });
       ws = null;
     }; //on close event
@@ -71,20 +95,42 @@ class App extends Component {
     }; //on error event
   };
 
+  disconnect = () => {
+    if (ws) {
+      ws.close();
+      ws = null;
+    }
+
+    this.setState({ isConnected: false, offline: false });
+  };
+
   output = msg => {
     this.setState(state => ({
       output: (state.output ? state.output + '\n' : '') + msg
     }));
   };
 
-  toggleModal = () => {
-    this.setState(state => ({ open: !state.open }));
-  };
-
   send = data => {
     if (ws !== null) {
       ws.send(data); //send method
     }
+  };
+
+  toggleFullScreen = () => {
+    this.setState(state => ({ fullScreen: !state.fullScreen }));
+  };
+
+  toggleModal = () => {
+    this.setState(state => ({ open: !state.open }));
+  };
+
+  toggleDrawer = () => {
+    this.setState(state => ({ drawerOpen: !state.drawerOpen }));
+  };
+
+  adjustConfig = (name, value) => {
+    config[name] = value;
+    cookies.set(name, value);
   };
 
   landscapeHide = type => {
@@ -121,44 +167,79 @@ class App extends Component {
   };
 
   render() {
+    const {
+      isLandscape,
+      showLeft,
+      showRight,
+      output,
+      isConnected,
+      loading,
+      open,
+      offline,
+      drawerOpen,
+      fullScreen
+    } = this.state;
     return (
       <div className="App">
-        {this.state.isConnected ? (
-          <Grow in={true} mountOnEnter unmountOnExit>
-            <Grid
-              container
-              direction={this.state.isLandscape ? 'row' : 'column'}
-              alignItems="stretch"
-              spacing={0}
-              style={{ height: '100%' }}
-            >
-              {this.state.isLandscape && this.landscapeHide('Left')}
+        <Grow in={offline || isConnected} mountOnEnter unmountOnExit>
+          <Grid
+            container
+            direction={isLandscape ? 'row' : 'column'}
+            alignItems="stretch"
+            spacing={0}
+            style={{ height: '100%' }}
+          >
+            {isLandscape && !fullScreen && this.landscapeHide('Left')}
 
-              {(!this.state.isLandscape || this.state.showLeft) && (
-                <Grid item xs={this.state.isLandscape}>
-                  <Header isConnected={this.state.isConnected} />
-                  <Output output={this.state.output} />
-                  <ActionGroup send={this.send} output={this.output} />
+            {(!isLandscape || showLeft) && (
+              <Grid item xs={isLandscape}>
+                <Header
+                  isConnected={isConnected}
+                  disconnect={this.disconnect}
+                  toggleDrawer={this.toggleDrawer}
+                />
+                {!fullScreen && <Output output={output} />}
+
+                <ActionGroup
+                  send={this.send}
+                  output={this.output}
+                  toggleDrawer={this.toggleDrawer}
+                  drawerOpen={drawerOpen}
+                  config={config}
+                  adjustConfig={this.adjustConfig}
+                  cookies={cookies}
+                  toggleFullScreen={this.toggleFullScreen}
+                />
+                {!fullScreen && (
                   <CmdInput send={this.send} output={this.output} />
-                </Grid>
-              )}
+                )}
+              </Grid>
+            )}
 
-              {(!this.state.isLandscape || this.state.showRight) && (
-                <Grid item xs>
-                  <Controller send={this.send} />
-                </Grid>
-              )}
+            {(!isLandscape || showRight) && (
+              <Grid item xs>
+                <Controller send={this.send} config={config} />
+              </Grid>
+            )}
 
-              {this.state.isLandscape && this.landscapeHide('Right')}
-            </Grid>
-          </Grow>
-        ) : (
+            {isLandscape && !fullScreen && this.landscapeHide('Right')}
+          </Grid>
+        </Grow>
+
+        {!offline && !isConnected && (
           <Main
             makeConnection={this.makeConnection}
-            loading={this.state.loading}
+            loading={loading}
+            cookies={cookies}
+            isLandscape={isLandscape}
           />
         )}
-        <MessageModal handleClose={this.toggleModal} open={this.state.open} />
+
+        <MessageModal
+          makeConnection={this.makeConnection}
+          handleClose={this.toggleModal}
+          open={open}
+        />
       </div>
     );
   }

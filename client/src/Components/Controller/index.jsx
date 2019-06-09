@@ -1,66 +1,25 @@
 import React, { Component } from 'react';
-import Grid from '@material-ui/core/Grid';
 import { withStyles } from '@material-ui/core/styles';
 import Textfield from '@material-ui/core/Textfield';
-import TouchControl from './TouchControl';
+import TouchEvent from './TouchEvent';
+import MotionEvent from './MotionEvent';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import MotionIcon from '@material-ui/icons/ScreenRotation';
 import TouchIcon from '@material-ui/icons/TouchApp';
-
-const styles = theme => ({
-  container: {
-    height: 'calc(100% - 50px)'
-  },
-  mouseControl: {
-    height: 'calc(100% - 30px)'
-  },
-  keyboard: {
-    height: 30,
-    width: '100%',
-    textAlign: 'center'
-  },
-  mouseclick: {
-    height: '50%'
-  },
-  mcbtn: {
-    width: '100%',
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    boxShadow: 'inset 0 0 10px 0px lightgray',
-    userSelect: 'none'
-  },
-
-  mousemove: {
-    boxShadow: 'inset 0 0 30px 0px lightgray'
-  },
-
-  mousescroll: {
-    boxShadow: 'inset -2px 0 10px 1px lightgray',
-    borderRadius: '25px 0 0 25px'
-  },
-  moveball: {
-    position: 'absolute',
-    width: 30,
-    height: 30,
-    borderRadius: '100%',
-    boxShadow: 'inset 0 0 10px 0 black',
-    display: 'none'
-  },
-  staticball: {
-    position: 'absolute',
-    width: 30,
-    height: 30,
-    borderRadius: '100%',
-    boxShadow: ' 0 0 30px 0 black',
-    display: 'none'
-  }
-});
+import Grid from '@material-ui/core/Grid';
+import styles from './ControllerStyle';
 
 class ControllerIndex extends Component {
+  allRefs = {
+    mmbtn: React.createRef(),
+    mscroll: React.createRef(),
+    mlbtn: React.createRef(),
+    mrbtn: React.createRef(),
+    moveBall: React.createRef(),
+    staticBall: React.createRef()
+  };
+
   state = {
     mode: 0
   };
@@ -71,25 +30,18 @@ class ControllerIndex extends Component {
 
   keyboard = e => {
     var key;
-    switch (e.keyCode) {
-      case 13:
-        key = '{ENTER}';
-        break;
-      case 8:
-        key = '{BACKSPACE}';
-        break;
-      case 27:
-        key = '{ESC}';
-        break;
-      default:
-        key = this.value;
+    if (e.key.length === 1) {
+      key = e.key;
+    } else {
+      key = `{${e.key.toUpperCase()}}`;
     }
-    this.value = '';
+    console.log(key);
     this.props.send('ky&' + key);
   };
 
   render() {
-    const { classes, send } = this.props;
+    const { classes, send, config } = this.props;
+    const allRefs = this.allRefs;
 
     return (
       <div className={classes.container}>
@@ -117,7 +69,61 @@ class ControllerIndex extends Component {
             }
           />
         </Tabs>
-        <TouchControl classes={classes} send={send} />
+        <Grid item container xs={12} className={classes.mouseControl}>
+          <Grid
+            item
+            xs={1}
+            className={classes.mousescroll}
+            ref={allRefs.mscroll}
+          />
+          <Grid
+            item
+            xs={9}
+            className={`${classes.mousemove} mdc-ripple-surface`}
+            ref={allRefs.mmbtn}
+          >
+            <div className={classes.moveball} ref={allRefs.moveBall} />
+            <div className={classes.staticball} ref={allRefs.staticBall} />
+          </Grid>
+          <Grid item xs={2}>
+            <Grid
+              item
+              xs={12}
+              className={classes.mouseclick}
+              style={{ borderRadius: '0 25px 0 0' }}
+            >
+              <div
+                ref={allRefs.mlbtn}
+                style={{ borderRadius: '0 25px 0 0' }}
+                className={`${classes.mcbtn} mdc-ripple-surface`}
+                data-mdc-ripple-is-bounded
+              >
+                LC
+              </div>
+            </Grid>
+            <Grid
+              item
+              xs={12}
+              className={classes.mouseclick}
+              style={{ borderRadius: '0 25px 0 0' }}
+            >
+              <div
+                ref={allRefs.mrbtn}
+                className={`${classes.mcbtn} mdc-ripple-surface`}
+                style={{ borderRadius: '0 0 25px 0' }}
+                data-mdc-ripple-is-bounded
+              >
+                RC
+              </div>
+            </Grid>
+          </Grid>
+        </Grid>
+
+        {this.state.mode === 0 ? (
+          <TouchEvent allRefs={allRefs} send={send} config={config} />
+        ) : (
+          <MotionEvent allRefs={allRefs} send={send} config={config} />
+        )}
         <Textfield
           className={classes.keyboard}
           placeholder="Keyboard"

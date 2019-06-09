@@ -1,15 +1,20 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Remo",
+  "name": "Remo",
   "icons": [
     {
       "src": "favicon.ico",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
+    },
+    {
+      "src": "favicon-180.png",
+      "sizes": "180x180 144x144",
+      "type": "image/x-png"
     }
   ],
-  "start_url": ".",
+  "start_url": "/~weiZ/remo/",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "theme_color": "#fafafa",
+  "background_color": "#fafafa"
 }

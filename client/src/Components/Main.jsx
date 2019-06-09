@@ -3,37 +3,64 @@ import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import Fab from '@material-ui/core/Fab';
-import LinkIcon from '@material-ui/icons/Link';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Avatar from '@material-ui/core/Avatar';
+import logo from '../Static/favicon.ico';
+import Link from '@material-ui/core/Link';
 
-const styles = theme =>
-  console.log(theme) || {
-    header: {
-      marginTop: 40,
-      fontStyle: 'italic',
-      fontSize: 60
-    },
-    btn: {
-      width: 150,
-      height: 150,
-      display: 'block',
-      margin: '20vh auto auto auto'
-    },
-    textField: {
-      maxWidth: 250,
-      display: 'block',
-      margin: '10vh auto'
-    },
-    fabProgress: {
-      position: 'absolute',
-      marginLeft: -110,
-      marginTop: -45
-    }
-  };
+const styles = () => ({
+  container: {
+    position: 'relative',
+    padding: '5vh 0',
+    height: 'calc(100% - 10vh)'
+  },
+  link: {
+    display: 'block',
+    textAlign: 'center',
+    fontSize: 14
+  },
+  avatar: {
+    display: 'inline-block',
+    width: 90,
+    height: 90,
+    verticalAlign: 'bottom'
+  },
+  header: {
+    fontStyle: 'italic',
+    fontWeight: 'bold',
+
+    fontSize: 76
+  },
+  footer: {
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+    margin: 0,
+    padding: 0
+  },
+  btn: {
+    width: 250,
+    display: 'block',
+    margin: '12vh auto auto auto'
+  },
+  textField: {
+    maxWidth: 250,
+    display: 'block',
+    margin: '8vh auto',
+    height: '10vh'
+  },
+  progressContainer: {
+    height: 40
+  },
+  fabProgress: {
+    margin: '0 auto',
+    display: 'block'
+  }
+});
 
 class Main extends Component {
   state = {
-    ip: this.getCookie('ip'),
+    ip: this.props.cookies.get('ip') || '',
     error: null
   };
 
@@ -46,30 +73,33 @@ class Main extends Component {
   makeConnection = () => {
     const { ip } = this.state;
     if (ip === '') {
-      return this.setState({ error: 'Invalid IP Address' });
+      return this.setState({
+        error: 'IP cannot be empty. Enter "Offline" to go offline mode'
+      });
     }
-    document.cookie = 'ip=' + ip + '; path=/';
-
+    this.props.cookies.set('ip', ip);
     this.props.makeConnection(ip);
   };
 
-  getCookie(name) {
-    var nameEQ = name + '=';
-    var ca = document.cookie.split(';');
-    for (var i = 0; i < ca.length; i++) {
-      var c = ca[i];
-      while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-      if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
-    }
-    return '';
-  }
-
   render() {
-    const { classes, loading } = this.props;
+    const { classes, loading, isLandscape } = this.props;
     return (
-      <React.Fragment>
-        <Typography variant="h3" align="center" className={classes.header}>
-          Remo CTL
+      <div className={classes.container}>
+        <Typography
+          variant="h3"
+          align="center"
+          className={classes.header}
+          color="primary"
+        >
+          <span>
+            Rem
+            <Avatar
+              component="span"
+              alt="Remy Sharp"
+              src={logo}
+              className={classes.avatar}
+            />
+          </span>
         </Typography>
         <TextField
           align="center"
@@ -83,13 +113,36 @@ class Main extends Component {
           margin="normal"
           fullWidth
         />
-        <Fab size="large" className={classes.btn} onClick={this.makeConnection}>
-          <LinkIcon style={{ fontSize: 60 }} />
-          {loading && (
-            <CircularProgress size={160} className={classes.fabProgress} />
-          )}
+        {!isLandscape && (
+          <div className={classes.progressContainer}>
+            {loading && (
+              <CircularProgress size={80} className={classes.fabProgress} />
+            )}
+          </div>
+        )}
+
+        <Fab
+          size="large"
+          color="primary"
+          variant="extended"
+          className={classes.btn}
+          onClick={this.makeConnection}
+        >
+          Connect
         </Fab>
-      </React.Fragment>
+        <br />
+        <Link href="Remo Conn.exe" download className={classes.link}>
+          Download Connector
+        </Link>
+        <Typography
+          align="center"
+          variant="caption"
+          display="block"
+          className={classes.footer}
+        >
+          <i>Copyright &copy; 2019 Wei J. Zheng. All rights reserved.</i>
+        </Typography>
+      </div>
     );
   }
 }

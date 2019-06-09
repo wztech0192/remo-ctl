@@ -1,15 +1,17 @@
 {
   "name": "client",
   "version": "0.1.0",
-  "homepage": "/~weiZ/conn/remoctl",
+  "homepage": "/~weiZ/remo",
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.0.2",
     "@material-ui/icons": "^4.0.1",
+    "@material-ui/lab": "^4.0.0-alpha.15",
     "@material/ripple": "^2.3.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "react-scripts": "3.0.1"
+    "react-scripts": "3.0.1",
+    "universal-cookie": "^4.0.0"
   },
   "scripts": {
     "start": "react-scripts start",

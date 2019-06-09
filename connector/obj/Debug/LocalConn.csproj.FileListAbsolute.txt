@@ -1,0 +1,11 @@
+C:\Users\Wei Zheng\source\repos\Control\LocalConn\bin\Debug\websocket-sharp.dll
+C:\Users\Wei Zheng\source\repos\Control\LocalConn\obj\Debug\LocalConn.csproj.CoreCompileInputs.cache
+C:\Users\Wei Zheng\source\repos\Control\LocalConn\obj\Debug\LocalConn.csproj.CopyComplete
+C:\Users\Wei Zheng\source\repos\Control\LocalConn\obj\Debug\LocalConn.csprojAssemblyReference.cache
+C:\Users\Wei Zheng\source\repos\Control\LocalConn\bin\Debug\Local Conn.exe.config
+C:\Users\Wei Zheng\source\repos\Control\LocalConn\bin\Debug\Local Conn.exe
+C:\Users\Wei Zheng\source\repos\Control\LocalConn\bin\Debug\Local Conn.pdb
+C:\Users\Wei Zheng\source\repos\Control\LocalConn\obj\Debug\Local Conn.exe
+C:\Users\Wei Zheng\source\repos\Control\LocalConn\obj\Debug\Local Conn.pdb
+C:\Users\Wei Zheng\source\repos\Control\LocalConn\obj\Debug\LocalConn.Properties.Resources.resources
+C:\Users\Wei Zheng\source\repos\Control\LocalConn\obj\Debug\LocalConn.csproj.GenerateResource.cache
