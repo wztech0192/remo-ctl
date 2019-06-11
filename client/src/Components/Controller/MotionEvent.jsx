@@ -1,8 +1,8 @@
 import { Component } from 'react';
 import { MDCRipple } from '@material/ripple';
-import '@material/ripple/dist/mdc.ripple.css';
 
 const eventStructure = [];
+let oldRefs = null;
 let motionStart = false;
 let relX, relY;
 
@@ -12,9 +12,10 @@ class TouchEvent extends Component {
   }
 
   componentDidMount() {
-    if (eventStructure.length <= 0) {
+    if (oldRefs !== this.props.allRefs || eventStructure.length <= 0) {
       //construct eventStructure
       const { mmbtn, mlbtn, mrbtn, mscroll } = this.props.allRefs;
+      oldRefs = this.props.allRefs;
       this.constructMotionEvent();
       this.constructScrollEvent(mscroll.current);
       this.constructClickEvent(mlbtn.current, 'left');

@@ -9,6 +9,7 @@ import MotionIcon from '@material-ui/icons/ScreenRotation';
 import TouchIcon from '@material-ui/icons/TouchApp';
 import Grid from '@material-ui/core/Grid';
 import styles from './ControllerStyle';
+import '@material/ripple/dist/mdc.ripple.css';
 
 class ControllerIndex extends Component {
   allRefs = {
@@ -86,31 +87,19 @@ class ControllerIndex extends Component {
             <div className={classes.staticball} ref={allRefs.staticBall} />
           </Grid>
           <Grid item xs={2}>
-            <Grid
-              item
-              xs={12}
-              className={classes.mouseclick}
-              style={{ borderRadius: '0 25px 0 0' }}
-            >
+            <Grid item xs={12} className={classes.mouseclick}>
               <div
                 ref={allRefs.mlbtn}
-                style={{ borderRadius: '0 25px 0 0' }}
                 className={`${classes.mcbtn} mdc-ripple-surface`}
                 data-mdc-ripple-is-bounded
               >
                 LC
               </div>
             </Grid>
-            <Grid
-              item
-              xs={12}
-              className={classes.mouseclick}
-              style={{ borderRadius: '0 25px 0 0' }}
-            >
+            <Grid item xs={12} className={classes.mouseclick}>
               <div
                 ref={allRefs.mrbtn}
                 className={`${classes.mcbtn} mdc-ripple-surface`}
-                style={{ borderRadius: '0 0 25px 0' }}
                 data-mdc-ripple-is-bounded
               >
                 RC

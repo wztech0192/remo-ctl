@@ -12,7 +12,8 @@ export default theme => ({
   },
 
   mouseclick: {
-    height: '50%'
+    height: '50%',
+    overflow: 'hidden'
   },
   mcbtn: {
     width: '100%',
@@ -26,11 +27,12 @@ export default theme => ({
   },
 
   mousemove: {
-    boxShadow: 'inset 0 0 30px 0px lightgray'
+    boxShadow: 'inset 0 0 30px 0px lightgray',
+    overflow: 'hidden'
   },
 
   mousescroll: {
-    boxShadow: 'inset -2px 0 10px 1px lightgray',
+    boxShadow: 'inset -2px 0 20px 2px lightgray',
     borderRadius: '25px 0 0 25px'
   },
   moveball: {
