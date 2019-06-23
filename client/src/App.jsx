@@ -60,7 +60,11 @@ class App extends Component {
       this.setState({ offline: true });
     } else {
       this.setState({ loading: true });
-      ws = new WebSocket('ws://' + ip);
+      if (ip.includes('wss://')) {
+        ws = new WebSocket(ip);
+      } else {
+        ws = new WebSocket('ws://' + ip);
+      }
       this.startConn();
     }
   };
