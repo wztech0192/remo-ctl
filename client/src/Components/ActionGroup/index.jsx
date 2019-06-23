@@ -16,7 +16,7 @@ class ActionGroupIndex extends Component {
   getCustFunc = ({ cmd }) => {
     if (cmd !== 'n/a') {
       this.props.output(`***${cmd}***`);
-      this.props.send('cmd&' + cmd);
+      this.props.send('cmd', [cmd]);
     } else {
       this.props.output('***No Preset Command***');
     }
@@ -42,7 +42,7 @@ class ActionGroupIndex extends Component {
           this.props.output('***Hide Console Window***');
         }
         btn.isActive = !btn.isActive;
-        this.props.send('cmd&TOGGLE');
+        this.props.send('cmd', ['TOGGLE']);
       },
       Icon: <VisibileIcon />,
       isActive: true
@@ -56,7 +56,7 @@ class ActionGroupIndex extends Component {
           this.props.output('***Unlock Target Mouse***');
         }
         btn.isActive = !btn.isActive;
-        this.props.send('cmd&LOCK');
+        this.props.send('cmd', ['LOCK']);
       },
       Icon: <LockIcon />,
       isActive: false

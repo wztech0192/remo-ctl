@@ -57,7 +57,7 @@ class TouchEvent extends Component {
           e.preventDefault();
           const touch = e.changedTouches[0];
           const relY = Math.round(scrollY - touch.pageY) * config.scrollSpeed;
-          if (relY !== 0) send(`mw&${relY}`);
+          if (relY !== 0) send('mw', [relY]);
           scrollY = touch.pageY;
         },
         touchend: e => {
@@ -89,7 +89,7 @@ class TouchEvent extends Component {
                 ? Math.round(deltaY * config.motionSpeed)
                 : 0;
             if (deltaX !== 0 && deltaX !== 0) {
-              send('mm&' + deltaX + '&' + deltaY);
+              send('mm', [deltaX, deltaY]);
               relX += deltaX / 2;
               relY += deltaY / 2;
               moveBall.current.style.marginLeft = relX + 'px';
@@ -112,12 +112,12 @@ class TouchEvent extends Component {
         touchstart: e => {
           e.preventDefault();
           motionStart = true;
-          send(`mc&${direction}`);
+          send('mc', [direction]);
         },
         touchend: e => {
           e.preventDefault();
           motionStart = false;
-          send(`me&${direction}`);
+          send('me', [direction]);
         }
       }
     });
@@ -146,8 +146,8 @@ class TouchEvent extends Component {
           isTap = false;
           setTimeout(() => {
             if (isTap) {
-              send('mc&left');
-              send('me&left');
+              send('mc', ['left']);
+              send('me', ['left']);
             }
           }, 150);
         },

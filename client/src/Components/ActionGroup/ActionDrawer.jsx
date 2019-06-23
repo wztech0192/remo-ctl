@@ -19,7 +19,7 @@ import ConfigSlider from './ConfigSlider';
 import FuncIcon from '@material-ui/icons/Widgets';
 import CustIcon from '@material-ui/icons/Apps';
 
-const styles = () => ({
+const styles = theme => ({
   slider: {},
   releaseTarget: {
     float: 'right'
@@ -27,6 +27,11 @@ const styles = () => ({
   container: {
     maxHeight: '80vh',
     overflowX: 'hidden'
+  },
+  selected: {
+    '& div': {
+      color: theme.palette.primary.main
+    }
   }
 });
 
@@ -48,24 +53,38 @@ class ActionDrawer extends Component {
       drawerOpen,
       classes,
       openEditModal,
-      send
+      send,
+      toggleGame,
+      gameMode
     } = this.props;
     return (
       <Drawer open={drawerOpen} onClose={toggleDrawer} anchor="bottom">
         <div className={classes.container}>
           <Divider />
           <List>
-            <ListItem button>
+            <ListItem
+              button
+              onClick={() => {
+                toggleGame(false);
+              }}
+              className={!gameMode ? classes.selected : ''}
+            >
               <ListItemIcon>
                 <DashboardIcon />
               </ListItemIcon>
-              <ListItemText primary="Dashboard (Not Implemeneted)" />
+              <ListItemText primary="Dashboard" />
             </ListItem>
-            <ListItem button>
+            <ListItem
+              button
+              className={gameMode ? classes.selected : ''}
+              onClick={() => {
+                toggleGame(true);
+              }}
+            >
               <ListItemIcon>
                 <GameIcon />
               </ListItemIcon>
-              <ListItemText primary="Game Page (Not Implemeneted)" />
+              <ListItemText primary="Game Page" />
             </ListItem>
           </List>
 
@@ -80,7 +99,12 @@ class ActionDrawer extends Component {
           <Collapse in={this.state.openFuncList} timeout="auto" unmountOnExit>
             <List>
               {funcBtn.map(btn => (
-                <ListItem key={btn.title} button onClick={() => btn.func(btn)}>
+                <ListItem
+                  className={btn.isActive ? classes.selected : ''}
+                  key={btn.title}
+                  button
+                  onClick={() => btn.func(btn)}
+                >
                   <ListItemIcon>{btn.Icon}</ListItemIcon>
                   <ListItemText primary={btn.title} />
                 </ListItem>
@@ -119,7 +143,7 @@ class ActionDrawer extends Component {
           <Button
             color="secondary"
             onClick={() => {
-              send('cmd&EXIT');
+              send('cmd', ['EXIT']);
             }}
             fullWidth
             className={classes.releaseTarget}

@@ -16,7 +16,7 @@ class CmdInput extends Component {
   send = () => {
     const { cmdHead, cmdBody } = this.state;
     const val = (cmdHead === '' ? '' : cmdHead + '\n') + cmdBody;
-    this.props.send('cmd&' + val);
+    this.props.send('cmd', [val]);
     this.props.output(val);
     this.setState({ cmdBody: '' });
   };

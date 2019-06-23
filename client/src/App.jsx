@@ -11,9 +11,11 @@ import Grid from '@material-ui/core/Grid';
 import LeftArrow from '@material-ui/icons/ArrowLeft';
 import RightArrow from '@material-ui/icons/ArrowRight';
 import Cookies from 'universal-cookie';
+import GameConnector from './Components/Game/GameConnector';
+import GameCanvas from './Components/Game/GameCanvas';
 
+const gc = new GameConnector();
 const cookies = new Cookies();
-
 let ws = null;
 
 const getSpeed = (strVal, defaultSpeed) => {
@@ -43,7 +45,8 @@ class App extends Component {
     isLandscape: window.orientation === 90,
     offline: false,
     drawerOpen: false,
-    fullScreen: false
+    fullScreen: false,
+    gameMode: false
   };
 
   componentDidMount() {
@@ -110,9 +113,11 @@ class App extends Component {
     }));
   };
 
-  send = data => {
-    if (ws !== null) {
-      ws.send(data); //send method
+  send = (type, actions) => {
+    if (this.state.gameMode) {
+      gc.dispatch(type, actions);
+    } else if (ws !== null) {
+      ws.send(type + '&' + actions.join('&')); //send method
     }
   };
 
@@ -126,6 +131,10 @@ class App extends Component {
 
   toggleDrawer = () => {
     this.setState(state => ({ drawerOpen: !state.drawerOpen }));
+  };
+
+  toggleGame = bool => {
+    if (this.state.gameMode !== bool) this.setState({ gameMode: bool });
   };
 
   adjustConfig = (name, value) => {
@@ -177,7 +186,8 @@ class App extends Component {
       open,
       offline,
       drawerOpen,
-      fullScreen
+      fullScreen,
+      gameMode
     } = this.state;
     return (
       <div className="App">
@@ -198,8 +208,6 @@ class App extends Component {
                   disconnect={this.disconnect}
                   toggleDrawer={this.toggleDrawer}
                 />
-                {!fullScreen && <Output output={output} />}
-
                 <ActionGroup
                   send={this.send}
                   output={this.output}
@@ -209,9 +217,20 @@ class App extends Component {
                   adjustConfig={this.adjustConfig}
                   cookies={cookies}
                   toggleFullScreen={this.toggleFullScreen}
+                  toggleGame={this.toggleGame}
+                  gameMode={gameMode}
                 />
-                {!fullScreen && (
-                  <CmdInput send={this.send} output={this.output} />
+                {gameMode ? (
+                  <React.Fragment>
+                    <GameCanvas connector={gc} />
+                  </React.Fragment>
+                ) : (
+                  !fullScreen && (
+                    <React.Fragment>
+                      <Output output={output} />
+                      <CmdInput send={this.send} output={this.output} />
+                    </React.Fragment>
+                  )
                 )}
               </Grid>
             )}

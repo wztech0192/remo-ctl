@@ -37,7 +37,7 @@ class ControllerIndex extends Component {
       key = `{${e.key.toUpperCase()}}`;
     }
     console.log(key);
-    this.props.send('ky&' + key);
+    this.props.send('ky', [key]);
   };
 
   render() {

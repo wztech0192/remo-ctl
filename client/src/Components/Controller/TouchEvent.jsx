@@ -52,7 +52,7 @@ class TouchEvent extends Component {
           e.preventDefault();
           const touch = e.changedTouches[0];
           const relY = Math.round((scrollY - touch.pageY) * config.scrollSpeed);
-          if (relY !== 0) send(`mw&${relY}`);
+          if (relY !== 0) send('mw', [relY]);
           scrollY = touch.pageY;
         },
         touchend: e => {
@@ -70,11 +70,11 @@ class TouchEvent extends Component {
       eventList: {
         touchstart: e => {
           e.preventDefault();
-          send(`mc&${direction}`);
+          send('mc', [direction]);
         },
         touchend: e => {
           e.preventDefault();
-          send(`me&${direction}`);
+          send('me', [direction]);
         }
       }
     });
@@ -102,7 +102,7 @@ class TouchEvent extends Component {
       } else {
         const dx = Math.round((relX - point.x) * config.mouseSpeed);
         const dy = Math.round((relY - point.y) * config.mouseSpeed);
-        send(`mm&${dx}&${dy}`);
+        send('mm', [dx, dy]);
         point.x = relX;
         point.y = relY;
       }
@@ -119,8 +119,8 @@ class TouchEvent extends Component {
           isTap = false;
           setTimeout(() => {
             if (isTap) {
-              send('mc&left');
-              send('me&left');
+              send('mc', ['left']);
+              send('me', ['left']);
             }
           }, 150);
         },
@@ -128,7 +128,6 @@ class TouchEvent extends Component {
         touchend: e => {
           e.preventDefault();
           isTap = true;
-          send('ms&');
           moveBall.current.style.display = 'none';
           staticBall.current.style.display = 'none';
         }
