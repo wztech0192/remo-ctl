@@ -6,16 +6,16 @@ export default class GameConnector {
   dispatch(type, actions) {
     switch (type) {
       case 'mw':
-        this.game.increaseBulletSize(actions[0]);
+        this.game.changeWeapon(actions[0]);
         break;
       case 'mm':
         this.game.aimMove(actions[0], actions[1]);
         break;
       case 'mc':
-        this.game.togglePlayerAttack();
+        this.game.setPlayerAttackStatus(true);
         break;
       case 'me':
-        this.game.togglePlayerAttack();
+        this.game.setPlayerAttackStatus(false);
         break;
       default:
     }

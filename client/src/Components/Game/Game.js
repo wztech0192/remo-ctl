@@ -1,9 +1,13 @@
 import Player from './GameObject/Player';
+import Mob from './GameObject/Mob';
 import Point from './GameObject/Point';
+import Weapon from './GameObject/Weapon';
 import * as Util from './Util/Tool';
-import QuadTree from './Util/QuadTree';
 
 //const movementSpeed = 10;
+
+const mobColor = 'rgba(0, 0, 0, 0.54)';
+const playerColor = 'rgb(0, 155, 160)';
 
 export default class Game {
   constructor(canvas) {
@@ -11,15 +15,25 @@ export default class Game {
     canvas.height = 250;
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d');
-    this.quadtree = new QuadTree(1, canvas);
     this.gameReset();
     this.gameLoop();
   }
 
   gameReset() {
-    this.enemies = [];
+    this.mobList = [];
+    this.bloodList = [];
     this.bullets = [];
+    this.score = 0;
+    this.highestScore = 0;
+    this.spawnMob = 0;
+    this.selectedWeapon = 0;
     this.level = 1;
+    this.weaponList = [
+      new Weapon('Pistol', 20, 5, 5, 4),
+      new Weapon('Sniper', 35, 30, 10, 7),
+      new Weapon('Rifle', 3, 1, 2, 4, 10, 2),
+      new Weapon('Shotgun', 25, 1, 4, 3, 10, 10)
+    ];
     this.player = this.generatePlayer();
   }
 
@@ -28,24 +42,36 @@ export default class Game {
     const y = this.canvas.height / 2;
     const diameter = 20;
     const hp = 100;
-    const property = {
-      atkCD: 6,
-      atkDMG: 10,
-      atkSize: 5,
-      atkSpeed: 4,
-      target: new Point(x, y, 1, 10)
-    };
-    return new Player(x, y, hp, diameter, property);
+    return new Player(
+      x,
+      y,
+      hp,
+      diameter,
+      new Point(x, y, 1, 10),
+      this.weaponList[0]
+    );
   }
 
   gameStop() {
     if (this.animate !== null) {
+      clearTimeout(this.spawning);
+      this.spawning = null;
       cancelAnimationFrame(this.animate);
       this.animate = null;
     }
   }
 
   gameLoop = () => {
+    if (!this.spawning && this.mobList <= 0 && this.spawnMob <= 0) {
+      this.spawning = setTimeout(() => {
+        this.level++;
+        this.spawnMob = 3 + this.level;
+        this.spawning = null;
+      }, 3000);
+    }
+    this.generateMob();
+    this.mobAction();
+    this.bloodAction();
     this.attackFrom(this.player);
     this.bulletAction();
     this.draw();
@@ -53,43 +79,60 @@ export default class Game {
   };
 
   aimMove(xS, yS) {
-    this.player.property.target.x += xS;
-    this.player.property.target.y += yS;
-  }
+    var newX = this.player.target.x + xS;
+    var newY = this.player.target.y + yS;
+    if (newX > 0 && newX < this.canvas.width) {
+      this.player.target.x = newX;
+    }
 
-  increaseBulletSize(dx) {
-    const newVal = this.player.property.atkSize + dx / 100;
-    if (newVal > 1) {
-      this.player.property.atkSize = newVal;
+    if (newY > 0 && newY < this.canvas.height) {
+      this.player.target.y = newY;
     }
   }
 
-  togglePlayerAttack() {
-    this.player.attack = !this.player.attack;
+  changeWeapon(dx) {
+    if (!this.changeCD) {
+      if (dx > 0) {
+        if (this.selectedWeapon > 0) this.selectedWeapon--;
+      } else {
+        if (this.selectedWeapon < this.weaponList.length - 1)
+          this.selectedWeapon++;
+      }
+      this.player.weapon = this.weaponList[this.selectedWeapon];
+      this.changeCD = true;
+      setTimeout(() => (this.changeCD = false), 350);
+    }
+  }
+
+  setPlayerAttackStatus(isAttack) {
+    this.player.attack = isAttack;
   }
 
   attackFrom(attacker) {
     if (attacker.attackCD > 0) attacker.attackCD--;
     else if (attacker.attack) {
-      var bullet = new Point(
-        attacker.x,
-        attacker.y,
-        attacker.property.atkDMG,
-        attacker.property.atkSize
-      );
-      var velocity = Util.calVelocity(
-        bullet,
-        attacker.property.target,
-        attacker.property.atkSpeed
-      );
-      bullet.setVelocity(velocity);
-      this.bullets.push(bullet);
+      for (let i = 0; i < attacker.weapon.atkTimes; i++) {
+        var bullet = new Point(
+          attacker.x,
+          attacker.y,
+          attacker.weapon.atkDMG,
+          attacker.weapon.atkSize
+        );
+        if (attacker.weapon.accuracy > 1) {
+          //accuracy base on this number, the larger number the lower accuracy
+          let accuracy = attacker.weapon.accuracy;
+          var newP = {
+            x: attacker.target.x + (accuracy - Math.random() * accuracy * 2),
+            y: attacker.target.y + (accuracy - Math.random() * accuracy * 2)
+          };
+          Util.setPath(bullet, newP, attacker.weapon.atkSpeed);
+        } else {
+          Util.setPath(bullet, attacker.target, attacker.weapon.atkSpeed);
+        }
+        this.bullets.push(bullet);
+      }
       attacker.resetCD();
     }
-    /*if (!turret.isEmpty()) {
-      turret.forEach(node => {
-        bulletFire(node.val);
-      });*/
   }
 
   bulletAction() {
@@ -104,33 +147,129 @@ export default class Game {
         bullet.y > this.canvas.height
       ) {
         this.bullets.splice(i, 1);
+      } else if (this.mobList.length > 0) {
+        //detect bullet-mob collision
+        this.mobList.forEach(mob => {
+          if (Util.isCollide(bullet, mob)) {
+            this.addBlood(mob, bullet);
+            let bHP = bullet.hp;
+            bullet.hp -= mob.hp;
+            mob.hp -= bHP;
+          }
+        });
       }
     }
+  }
 
-    /* while (node !== null) {
-      var b = node.val;
-      b.move();
-      if (--b.life <= 0) {
-        bullets.shift();
-      } else if (!mob.isEmpty()) {
-        //detect bullet-mob collision
-        var node2 = quadtree.retrieve(new LinkedList(), b).first;
-        while (node2 !== null) {
-          var m = node2.val;
-          if (testCollision(b, m, ballSize)) {
-            addBlood(m, b, mobColor);
-            bullets.remove(node);
-            if (--m.life <= 0) {
-              score++;
-              mob.removeByValue(m);
+  generateMob() {
+    if (this.spawnMob > 0) {
+      const rand = [Util.randBoolean(), Util.randBoolean()];
+      const diameter = 5 + Math.random() * 20;
+      const hp = 5;
+      let mob;
+      if (rand[0] && rand[1])
+        mob = new Mob(
+          this.canvas.width,
+          Math.random() * this.canvas.height,
+          hp,
+          diameter
+        );
+      else if (!rand[0] && !rand[1])
+        mob = new Mob(
+          Math.random() * this.canvas.width,
+          this.canvas.height,
+          hp,
+          diameter
+        );
+      else if (rand[0])
+        mob = new Mob(Math.random() * this.canvas.width, 0, hp, diameter);
+      else mob = new Mob(0, Math.random() * this.canvas.height, hp, diameter);
+
+      const speed = 0.1 + Math.sqrt(this.level) / 10;
+      Util.setPath(mob, this.player, speed);
+      this.mobList.push(mob);
+      this.spawnMob--;
+    }
+  }
+
+  mobAction() {
+    for (var i = 0; i < this.mobList.length; i++) {
+      let mob = this.mobList[i];
+      if (mob.hp <= 0) {
+        this.score++;
+        this.mobList.splice(i, 1);
+      } else {
+        let speed = 0.1 + Math.sqrt(this.level) / 10;
+        if (mob.targetCD > 0) {
+          //travel toward target when cd is positive
+          mob.targetCD--;
+          if (this.level >= 4) {
+            //circular path
+            if (mob.directionCD <= 0) {
+              // change direction
+              let directionAngle = 20 + Math.random() * 120;
+              mob.updateDirection(100, directionAngle);
             }
-            break;
+            if (mob.direction)
+              //circular in left
+              Util.setCircularPath(mob, this.player, speed, mob.directionAngle);
+            //circular in right
+            else
+              Util.setCircularPath(
+                mob,
+                this.player,
+                -speed,
+                -mob.directionAngle
+              );
           }
-          node2 = node2.next;
+          mob.directionCD--;
+        } else if (mob.targetCD === 0) {
+          //randomize targeting cd from -100 to 100
+          mob.targetCD = 200 * Math.random() - 100;
+        } else mob.targetCD++; //travel without target when cd is negative
+        mob.move();
+        if (Util.isCollide(mob, this.player)) {
+          this.player.hp -= mob.hp;
+          this.addBlood(this.player, mob);
+          this.mobList.splice(i, 1);
         }
       }
-      node = node.next;
-    }*/
+    }
+  }
+
+  addBlood(p1, p2) {
+    var num = p2.hp;
+    for (var i = 0; i < num; ++i) {
+      const bld = new Point(
+        p2.x,
+        p2.y,
+        Math.random() * 100,
+        p1.radius * (0.6 * Math.random() + 0.2)
+      );
+      let xs2, ys2;
+      if (p2.vel) {
+        xs2 = p2.vel.xS;
+        ys2 = p2.vel.yS;
+      } else {
+        xs2 = -p1.vel.xS * 2;
+        ys2 = -p1.vel.yS * 2;
+      }
+      var sp = (Math.abs(xs2) + Math.abs(ys2)) / 2;
+      const xS = (xs2 > 0 ? sp : -sp) * Math.random();
+      const yS = (ys2 > 0 ? sp : -sp) * Math.random();
+      bld.setVelocity({ xS, yS });
+      this.bloodList.push(bld);
+    }
+  }
+
+  bloodAction() {
+    for (let i = 0; i < this.bloodList.length; i++) {
+      let b = this.bloodList[i];
+      b.move();
+      if (--b.hp <= 0) {
+        this.bloodList.splice(i, 1);
+      }
+    }
   }
 
   /**CANVAS DRAW */
@@ -138,28 +277,17 @@ export default class Game {
   draw() {
     this.ctx.fillStyle = '#fafafa';
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height); //clear canvas
-    this.ctx.strokeStyle = '#666666';
-    this.quadtree.drawGrid(this.ctx);
-    this.ctx.fillStyle = 'rgba(0, 0, 0, 0.54)';
+    this.ctx.strokeStyle = playerColor;
+    this.ctx.fillStyle = playerColor;
     this.drawObject(this.player);
-    this.drawAim(this.player.property.target, false);
+    this.drawAim(this.player.target, false);
     this.drawEachObject(this.bullets);
-    //drawEachObject(this.turret);
-    //this.ctx.fillStyle = mobColor;
-    this.drawEachObject(this.enemies);
-    /* this.blood.forEach(node => {
-      if (this.ctx.fill !== node.val.color) this.ctx.fillStyle = node.val.color;
-      this.drawObject(node.val);
-    });*/
+    this.ctx.fillStyle = mobColor;
+    this.drawEachObject(this.bloodList);
+    this.drawEachObject(this.mobList);
     this.ctx.closePath();
-    /*this.ctx.fillStyle = 'gray';
-    this.ctx.fillText('Turret Remain: ' + remainTurret, 10, 25);
-    this.ctx.fillText('Turret Status: ' + turretstat, 10, 50);
-    if (remainTurret > 0) this.ctx.fillText("Press 'T' to Deploy", 10, 75);
-    this.ctx.fillText('Health: ' + this.player.life, canvas.width / 2 - 45, 25);
-    this.ctx.fillText('Level: ' + level, canvas.width - 150, 25);
-    this.ctx.fillText('Score: ' + score, canvas.width - 150, 50);
-    this.ctx.fillText('Highest Level: ' + highestLevel, canvas.width - 175, 75);*/
+
+    this.drawInfo();
   }
 
   drawObject(obj) {
@@ -185,12 +313,18 @@ export default class Game {
   }
 
   //draw information on center of canvas
-  drawInfo(str) {
-    this.ctx.font = '350% Comic Sans MS';
-    this.ctx.fillStyle = 'black';
-    this.ctx.textAlign = 'center';
-    this.ctx.fillText(str, this.canvas.width / 2, this.canvas.height / 2);
-    this.ctx.textAlign = 'left';
-    this.ctx.font = '125% Comic Sans MS';
+  drawInfo() {
+    this.ctx.fillText('Score: ' + this.score, 20, 10);
+    this.ctx.fillText(
+      'Highest Score: ' + this.highestScore,
+      20,
+      this.canvas.height - 10
+    );
+    this.ctx.fillText('Health: ' + this.player.hp, this.canvas.width - 70, 10);
+    this.ctx.fillText(
+      this.player.weapon.name,
+      this.canvas.width - 70,
+      this.canvas.height - 10
+    );
   }
 }

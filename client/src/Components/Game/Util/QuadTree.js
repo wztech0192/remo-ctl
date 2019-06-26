@@ -1,5 +1,6 @@
 const MAX_LEVEL = 8;
-const MAX_OBJECT = 10;
+const MAX_OBJECT = 4;
+const FillColor = 'rgba(0,0,0,0.02)';
 class Bound {
   constructor(x, y, w, h) {
     this.cX = x + w / 2;
@@ -33,23 +34,23 @@ export default class QuadTree {
   }
 
   split() {
-    var newTreelevel = this.treelevel + 1,
+    var newLevel = this.level + 1,
       hw = this.bound.width / 2,
       hh = this.bound.height / 2;
     this.nodes[0] = new QuadTree(
-      newTreelevel,
+      newLevel,
       new Bound(this.bound.x, this.bound.y, hw, hh)
     );
     this.nodes[1] = new QuadTree(
-      newTreelevel,
+      newLevel,
       new Bound(this.bound.cX, this.bound.y, hw, hh)
     );
     this.nodes[2] = new QuadTree(
-      newTreelevel,
+      newLevel,
       new Bound(this.bound.x, this.bound.cY, hw, hh)
     );
     this.nodes[3] = new QuadTree(
-      newTreelevel,
+      newLevel,
       new Bound(this.bound.cX, this.bound.cY, hw, hh)
     );
   }
@@ -80,18 +81,16 @@ export default class QuadTree {
       }
     }
     this.list.push(p);
-
     //split and move val to sub node if list is oversize
-    if (this.list.size > MAX_OBJECT && this.treelevel < MAX_LEVEL) {
+    if (this.list.length > MAX_OBJECT && this.level < MAX_LEVEL) {
       if (this.nodes[0] === null) this.split();
-      var it = this.list.first;
-      while (it !== null) {
-        index = this.defIndex(it.val);
+      for (let i = 0; i < this.list.length; i++) {
+        const val = this.list[i];
+        index = this.defIndex(val);
         if (index !== -1) {
-          this.nodes[index].insert(it.val);
-          this.list.remove(it);
+          this.nodes[index].insert(val);
+          this.list.splice(i, 1);
         }
-        it = it.next;
       }
     }
   }
@@ -102,11 +101,13 @@ export default class QuadTree {
       if (index !== -1) this.nodes[index].retrieve(list, p);
       else for (var i = 0; i < 4; ++i) this.nodes[i].retrieve(list, p);
     }
-    list.connect(this.list);
-    return list;
+    console.log(this.list);
+
+    return list.concat(this.list);
   }
 
   drawGrid(ctx) {
+    ctx.strokeStyle = FillColor;
     for (var i = 0; i < 4; ++i) {
       if (this.nodes[i] !== null) {
         ctx.beginPath();

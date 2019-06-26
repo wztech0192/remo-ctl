@@ -225,9 +225,7 @@ class App extends Component {
                   gameMode={gameMode}
                 />
                 {gameMode ? (
-                  <React.Fragment>
-                    <GameCanvas connector={gc} />
-                  </React.Fragment>
+                  <GameCanvas connector={gc} />
                 ) : (
                   !fullScreen && (
                     <React.Fragment>

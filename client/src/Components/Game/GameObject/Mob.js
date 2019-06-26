@@ -1,9 +1,10 @@
 import Point from './Point';
+import { randBoolean } from '../Util/Tool';
 
 //mob extend of point
 export default class Mob extends Point {
-  constructor(x, y, diameter, hp, speed) {
-    super(x, y, diameter, hp);
+  constructor(x, y, hp, diameter, speed) {
+    super(x, y, hp, diameter);
     this.speed = speed;
     this.directionCD = Math.random() * 50;
     this.direction = randBoolean();

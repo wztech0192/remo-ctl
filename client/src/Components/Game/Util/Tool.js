@@ -5,27 +5,27 @@ export const randBoolean = () => {
   return Math.random() >= 0.5;
 };
 
-export const calVelocity = (p1, p2, speed) => {
+export const setPath = (p1, p2, speed) => {
   var xDif = p1.x - p2.x,
     yDif = p1.y - p2.y,
     angle = Math.atan2(xDif, yDif) / Math.PI,
     xS = -Math.sin(angle * Math.PI) * speed,
     yS = -Math.cos(angle * Math.PI) * speed;
-  return { xS, yS };
+  return p1.setVelocity({ xS, yS });
 };
 
-export const orbitalPath = (p1, p2, speed) => {
+export const setOrbitalPath = (p1, p2, speed) => {
   var xDif = p1.x - p2.x,
     yDif = p1.y - p2.y,
     angle = Math.atan2(xDif, yDif) / Math.PI,
     xS = -Math.cos(angle * Math.PI) * speed,
     yS = Math.sin(angle * Math.PI) * speed;
-  return { xS, yS };
+  return p1.setVelocity({ xS, yS });
 };
 
-export const circularPath = (p1, p2, speed, adjustAngle) => {
+export const setCircularPath = (p1, p2, speed, adjustAngle) => {
   var path = adjustPathPoint(p1, p2, adjustAngle);
-  orbitalPath(p1, path, speed);
+  setOrbitalPath(p1, path, speed);
 };
 
 export const adjustPathPoint = (p1, p2, adjustAngle) => {
@@ -41,8 +41,8 @@ export const findAdjustAnglePoint = (p, distance, angleRad) => {
   return new Point(newX, newY);
 };
 
-export const testCollision = (p1, p2, ballSize) => {
-  return ballSize * p1.radius + ballSize * p2.radius - findDist(p1, p2) >= 0;
+export const isCollide = (p1, p2) => {
+  return p1.radius + p2.radius - findDist(p1, p2) >= 0;
 };
 
 export const findAngle = (p1, p2) => {
