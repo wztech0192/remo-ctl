@@ -13,8 +13,24 @@ class GameCanvas extends Component {
     this.game = null;
   }
 
+  startOrPauseGame = () => {
+    console.log(this.game.isGameRunning());
+    if (this.game.isGameRunning()) {
+      this.game.gameStop();
+    } else {
+      this.game.gameLoop();
+    }
+  };
+
   render() {
-    return <canvas ref="canvas" width="100%" height="250px" />;
+    return (
+      <canvas
+        ref="canvas"
+        width="100%"
+        height="250px"
+        onClick={this.startOrPauseGame}
+      />
+    );
   }
 }
 

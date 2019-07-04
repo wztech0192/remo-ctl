@@ -3,11 +3,24 @@ import Mob from './GameObject/Mob';
 import Point from './GameObject/Point';
 import Weapon from './GameObject/Weapon';
 import * as Util from './Util/Tool';
+import Cookies from 'universal-cookie';
 
+const cookies = new Cookies();
 //const movementSpeed = 10;
-
 const mobColor = 'rgba(0, 0, 0, 0.54)';
 const playerColor = 'rgb(0, 155, 160)';
+
+const getHighestScore = () => {
+  var score = cookies.get('highestscore');
+  if (score === undefined || score === null || score === '') {
+    return 0;
+  }
+  try {
+    return parseInt(score);
+  } catch {
+    return 0;
+  }
+};
 
 export default class Game {
   constructor(canvas) {
@@ -15,16 +28,22 @@ export default class Game {
     canvas.height = 250;
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d');
+    this.highestScore = getHighestScore();
+    this.animate = null;
     this.gameReset();
-    this.gameLoop();
+    this.draw();
+    this.drawPauseStatus();
   }
 
   gameReset() {
     this.mobList = [];
     this.bloodList = [];
     this.bullets = [];
+    if (this.score > this.highestScore) {
+      this.highestScore = this.score;
+      cookies.set('highestscore', this.highestScore);
+    }
     this.score = 0;
-    this.highestScore = 0;
     this.spawnMob = 0;
     this.selectedWeapon = 0;
     this.level = 1;
@@ -52,30 +71,33 @@ export default class Game {
     );
   }
 
-  gameStop() {
-    if (this.animate !== null) {
+  isGameRunning = () => {
+    return this.animate !== null;
+  };
+
+  gameStop = isGameOver => {
+    if (this.isGameRunning()) {
       clearTimeout(this.spawning);
       this.spawning = null;
       cancelAnimationFrame(this.animate);
       this.animate = null;
     }
-  }
+    this.drawPauseStatus(isGameOver);
+  };
 
   gameLoop = () => {
-    if (!this.spawning && this.mobList <= 0 && this.spawnMob <= 0) {
-      this.spawning = setTimeout(() => {
-        this.level++;
-        this.spawnMob = 3 + this.level;
-        this.spawning = null;
-      }, 3000);
+    if (this.player.hp > 0) {
+      this.generateMob();
+      this.mobAction();
+      this.bloodAction();
+      this.attackFrom(this.player);
+      this.bulletAction();
+      this.draw();
+      this.animate = requestAnimationFrame(this.gameLoop);
+    } else {
+      this.gameStop(true);
+      this.gameReset();
     }
-    this.generateMob();
-    this.mobAction();
-    this.bloodAction();
-    this.attackFrom(this.player);
-    this.bulletAction();
-    this.draw();
-    this.animate = requestAnimationFrame(this.gameLoop);
   };
 
   aimMove(xS, yS) {
@@ -84,7 +106,6 @@ export default class Game {
     if (newX > 0 && newX < this.canvas.width) {
       this.player.target.x = newX;
     }
-
     if (newY > 0 && newY < this.canvas.height) {
       this.player.target.y = newY;
     }
@@ -162,6 +183,14 @@ export default class Game {
   }
 
   generateMob() {
+    if (!this.spawning && this.mobList <= 0 && this.spawnMob <= 0) {
+      this.spawning = setTimeout(() => {
+        this.level++;
+        this.spawnMob = 3 + this.level;
+        this.spawning = null;
+      }, 3000);
+    }
+
     if (this.spawnMob > 0) {
       const rand = [Util.randBoolean(), Util.randBoolean()];
       const diameter = 5 + Math.random() * 20;
@@ -199,21 +228,19 @@ export default class Game {
         this.score++;
         this.mobList.splice(i, 1);
       } else {
-        let speed = 0.1 + Math.sqrt(this.level) / 10;
+        let speed = 0.2 + Math.sqrt(this.level) / 8;
         if (mob.targetCD > 0) {
           //travel toward target when cd is positive
           mob.targetCD--;
-          if (this.level >= 4) {
+          if (this.level >= 0) {
             //circular path
             if (mob.directionCD <= 0) {
               // change direction
               let directionAngle = 20 + Math.random() * 120;
-              mob.updateDirection(100, directionAngle);
+              mob.updateDirection(150, directionAngle);
             }
             if (mob.direction)
-              //circular in left
               Util.setCircularPath(mob, this.player, speed, mob.directionAngle);
-            //circular in right
             else
               Util.setCircularPath(
                 mob,
@@ -275,7 +302,7 @@ export default class Game {
   /**CANVAS DRAW */
 
   draw() {
-    this.ctx.fillStyle = '#fafafa';
+    this.ctx.fillStyle = 'rgba(250, 250, 250, .6)';
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height); //clear canvas
     this.ctx.strokeStyle = playerColor;
     this.ctx.fillStyle = playerColor;
@@ -286,7 +313,6 @@ export default class Game {
     this.drawEachObject(this.bloodList);
     this.drawEachObject(this.mobList);
     this.ctx.closePath();
-
     this.drawInfo();
   }
 
@@ -325,6 +351,14 @@ export default class Game {
       this.player.weapon.name,
       this.canvas.width - 70,
       this.canvas.height - 10
+    );
+  }
+
+  drawPauseStatus(isGameOver) {
+    this.ctx.fillText(
+      isGameOver ? 'You Die! Touch To Restart' : 'Touch Me To Start!',
+      this.canvas.width / 2 - 35,
+      30
     );
   }
 }
