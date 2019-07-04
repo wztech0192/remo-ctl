@@ -14,7 +14,6 @@ class GameCanvas extends Component {
   }
 
   startOrPauseGame = () => {
-    console.log(this.game.isGameRunning());
     if (this.game.isGameRunning()) {
       this.game.gameStop();
     } else {
