@@ -1,5 +1,5 @@
 //utility tools
-import Point from '../GameObject/Point';
+import Point from './entities/Point';
 
 export const randBoolean = () => {
   return Math.random() >= 0.5;

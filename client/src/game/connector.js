@@ -1,7 +1,25 @@
+import Game from 'game';
+
 export default class GameConnector {
-  setGame(game) {
-    this.game = game;
+  hasGame() {}
+
+  startGame(canvas) {
+    this.game = new Game(canvas);
   }
+
+  stopGame() {
+    this.game.gameStop();
+    this.game = null;
+  }
+
+  toggleGamePause = () => {
+    if (!this.game) return;
+    if (this.game.isGameRunning()) {
+      this.game.gameStop();
+    } else {
+      this.game.gameLoop();
+    }
+  };
 
   dispatch(type, actions) {
     switch (type) {

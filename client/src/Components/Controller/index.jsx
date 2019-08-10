@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Textfield from '@material-ui/core/Textfield';
 import TouchEvent from './TouchEvent';
@@ -10,8 +10,13 @@ import TouchIcon from '@material-ui/icons/TouchApp';
 import Grid from '@material-ui/core/Grid';
 import styles from './ControllerStyle';
 import '@material/ripple/dist/mdc.ripple.css';
+import { connect } from 'react-redux';
+import { send } from 'store/actions/connAction';
+import { config } from 'tools';
 
-class ControllerIndex extends Component {
+const mapDispatchToProps = { send };
+
+class ControllerIndex extends PureComponent {
   allRefs = {
     mmbtn: React.createRef(),
     mscroll: React.createRef(),
@@ -36,12 +41,11 @@ class ControllerIndex extends Component {
     } else {
       key = `{${e.key.toUpperCase()}}`;
     }
-    console.log(key);
     this.props.send('ky', [key]);
   };
 
   render() {
-    const { classes, send, config } = this.props;
+    const { classes, send } = this.props;
     const allRefs = this.allRefs;
 
     return (
@@ -125,4 +129,7 @@ class ControllerIndex extends Component {
   }
 }
 
-export default withStyles(styles)(ControllerIndex);
+export default connect(
+  false,
+  mapDispatchToProps
+)(withStyles(styles)(ControllerIndex));

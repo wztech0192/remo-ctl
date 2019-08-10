@@ -1,5 +1,5 @@
 import Point from './Point';
-import { randBoolean } from '../Util/Tool';
+import { randBoolean } from '../tools';
 
 //mob extend of point
 export default class Mob extends Point {

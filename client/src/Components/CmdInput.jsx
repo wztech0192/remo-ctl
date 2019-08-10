@@ -1,9 +1,13 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
+import { connect } from 'react-redux';
+import { output, send } from 'store/actions/connAction';
 
-class CmdInput extends Component {
+const mapDispatchToProps = {};
+
+class CmdInput extends PureComponent {
   state = {
     cmdHead: '',
     cmdBody: ''
@@ -68,4 +72,7 @@ class CmdInput extends Component {
   }
 }
 
-export default CmdInput;
+export default connect(
+  false,
+  mapDispatchToProps
+)(CmdInput);

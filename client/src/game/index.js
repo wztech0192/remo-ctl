@@ -1,18 +1,17 @@
-import Player from './GameObject/Player';
-import Mob from './GameObject/Mob';
-import Point from './GameObject/Point';
-import Weapon from './GameObject/Weapon';
-import * as Util from './Util/Tool';
-import Cookies from 'universal-cookie';
+import Player from './entities/Player';
+import Mob from './entities/Mob';
+import Point from './entities/Point';
+import Weapon from './entities/Weapon';
+import * as Tools from './tools';
+import { cookies } from 'tools';
 
-const cookies = new Cookies();
 //const movementSpeed = 10;
 const mobColor = 'rgba(0, 0, 0, 0.54)';
 const playerColor = 'rgb(0, 155, 160)';
 
 const getHighestScore = () => {
   var score = cookies.get('highestscore');
-  if (score === undefined || score === null || score === '') {
+  if (!score) {
     return 0;
   }
   try {
@@ -146,9 +145,9 @@ export default class Game {
             x: attacker.target.x + (accuracy - Math.random() * accuracy * 2),
             y: attacker.target.y + (accuracy - Math.random() * accuracy * 2)
           };
-          Util.setPath(bullet, newP, attacker.weapon.atkSpeed);
+          Tools.setPath(bullet, newP, attacker.weapon.atkSpeed);
         } else {
-          Util.setPath(bullet, attacker.target, attacker.weapon.atkSpeed);
+          Tools.setPath(bullet, attacker.target, attacker.weapon.atkSpeed);
         }
         this.bullets.push(bullet);
       }
@@ -171,7 +170,7 @@ export default class Game {
       } else if (this.mobList.length > 0) {
         //detect bullet-mob collision
         this.mobList.forEach(mob => {
-          if (Util.isCollide(bullet, mob)) {
+          if (Tools.isCollide(bullet, mob)) {
             this.addBlood(mob, bullet);
             let bHP = bullet.hp;
             bullet.hp -= mob.hp;
@@ -192,7 +191,7 @@ export default class Game {
     }
 
     if (this.spawnMob > 0) {
-      const rand = [Util.randBoolean(), Util.randBoolean()];
+      const rand = [Tools.randBoolean(), Tools.randBoolean()];
       const diameter = 5 + Math.random() * 20;
       const hp = 5;
       let mob;
@@ -215,7 +214,7 @@ export default class Game {
       else mob = new Mob(0, Math.random() * this.canvas.height, hp, diameter);
 
       const speed = 0.1 + Math.sqrt(this.level) / 10;
-      Util.setPath(mob, this.player, speed);
+      Tools.setPath(mob, this.player, speed);
       this.mobList.push(mob);
       this.spawnMob--;
     }
@@ -240,9 +239,14 @@ export default class Game {
               mob.updateDirection(150, directionAngle);
             }
             if (mob.direction)
-              Util.setCircularPath(mob, this.player, speed, mob.directionAngle);
+              Tools.setCircularPath(
+                mob,
+                this.player,
+                speed,
+                mob.directionAngle
+              );
             else
-              Util.setCircularPath(
+              Tools.setCircularPath(
                 mob,
                 this.player,
                 -speed,
@@ -255,7 +259,7 @@ export default class Game {
           mob.targetCD = 200 * Math.random() - 100;
         } else mob.targetCD++; //travel without target when cd is negative
         mob.move();
-        if (Util.isCollide(mob, this.player)) {
+        if (Tools.isCollide(mob, this.player)) {
           this.player.hp -= mob.hp;
           this.addBlood(this.player, mob);
           this.mobList.splice(i, 1);
