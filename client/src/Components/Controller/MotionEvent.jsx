@@ -43,7 +43,7 @@ class TouchEvent extends Component {
             "* Enable 'Motion/Orientation' setting in browser"
         );
       }
-    }, 30);
+    }, 150);
   }
 
   unregisterAllEvent() {
