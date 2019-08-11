@@ -11,6 +11,11 @@ import { cookies } from 'tools';
 import { makeConnection } from 'store/actions/connAction';
 import { connect } from 'react-redux';
 import Fade from '@material-ui/core/Fade';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import InputIcon from '@material-ui/icons/MoreVert';
+import IconButton from '@material-ui/core/IconButton';
+import Tooltip from '@material-ui/core/Tooltip';
+import EntryMenu from './EntryMenu';
 
 const mapStateToProps = state => ({
   loading: state.conn.loading,
@@ -22,7 +27,25 @@ const mapDispatchToProps = { makeConnection };
 class Entry extends PureComponent {
   state = {
     ip: cookies.get('ip') || '',
-    error: null
+    error: null,
+    anchorEl: null,
+    openMenu: false
+  };
+
+  onOpenMenu = e => {
+    this.setState({ anchorEl: e.target, openMenu: true });
+  };
+  onCloseMenu = e => {
+    switch (e.target.textContent) {
+      case 'Offline Mode':
+        this.props.makeConnection('offline');
+        break;
+      case 'Remote Control':
+        window.prompt('Remote Server Password Required:');
+        break;
+      default:
+    }
+    this.setState({ anchorEl: null, openMenu: false });
   };
 
   inputPrompt = e => {
@@ -43,6 +66,18 @@ class Entry extends PureComponent {
   };
 
   clearError = () => this.setState({ error: false });
+
+  adornment = {
+    endAdornment: (
+      <InputAdornment position="end">
+        <Tooltip title="More Action" placement="top">
+          <IconButton size="small" onClick={this.onOpenMenu}>
+            <InputIcon />
+          </IconButton>
+        </Tooltip>
+      </InputAdornment>
+    )
+  };
 
   render() {
     const { classes, loading, isLandscape } = this.props;
@@ -74,9 +109,15 @@ class Entry extends PureComponent {
             className={classes.textField}
             value={this.state.ip}
             onChange={this.inputPrompt}
-            margin="normal"
             fullWidth
+            InputProps={this.adornment}
           />
+          <EntryMenu
+            openMenu={this.state.openMenu}
+            anchorEl={this.state.anchorEl}
+            onCloseMenu={this.onCloseMenu}
+          />
+
           {!isLandscape && (
             <div className={classes.progressContainer}>
               {loading && (
@@ -92,7 +133,7 @@ class Entry extends PureComponent {
             className={classes.btn}
             onClick={this.makeConnection}
           >
-            Connect
+            {loading ? 'Cancel Connection' : 'Connect'}
           </Fab>
           <br />
           <Link href="Remo Conn.exe" download className={classes.link}>
@@ -136,7 +177,8 @@ const styles = () => ({
     fontSize: 76
   },
   footer: {
-    position: 'absolute',
+    position: 'fixed',
+    left: 0,
     bottom: 0,
     width: '100%',
     margin: 0,
@@ -154,7 +196,7 @@ const styles = () => ({
     height: '10vh'
   },
   progressContainer: {
-    height: 40
+    height: 50
   },
   fabProgress: {
     margin: '0 auto',

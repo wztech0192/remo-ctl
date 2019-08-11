@@ -13,9 +13,6 @@ export const toggle = key => dispatch => () =>
 export const toggleFullScreen = () => dispatch =>
   dispatch({ type: ON_TOGGLE, key: 'isFullScreen' });
 
-export const toggleModal = () => dispatch =>
-  dispatch({ type: ON_TOGGLE, key: 'modalOpen' });
-
 export const toggleDrawer = () => dispatch =>
   dispatch({ type: ON_TOGGLE, key: 'drawerOpen' });
 

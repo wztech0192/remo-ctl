@@ -5,6 +5,7 @@ const eventStructure = [];
 let oldRefs = null;
 let motionStart = false;
 let relX, relY;
+let active = false;
 
 class TouchEvent extends Component {
   componentWillUnmount() {
@@ -31,6 +32,18 @@ class TouchEvent extends Component {
         el.addEventListener(key, eventList[key], false);
       }
     });
+    //check if user has active the sensor
+    setTimeout(() => {
+      if (!active) {
+        alert(
+          'Motion Sensor Is Not Responding.\n' +
+            '--------------------\n' +
+            'To enable motion sensor:\n' +
+            '* Use https instead of http\n' +
+            "* Enable 'Motion/Orientation' setting in browser"
+        );
+      }
+    }, 30);
   }
 
   unregisterAllEvent() {
@@ -39,6 +52,7 @@ class TouchEvent extends Component {
         el.removeEventListener(key, eventList[key], false);
       }
     });
+    active = false;
   }
 
   constructScrollEvent(scroll) {
@@ -76,6 +90,9 @@ class TouchEvent extends Component {
       el: window,
       eventList: {
         deviceorientation: e => {
+          if (!active && e.alpha) {
+            active = true;
+          }
           var alpha = e.alpha > 180 ? e.alpha - 360 : e.alpha;
           if (motionStart) {
             var deltaX = alp - alpha;

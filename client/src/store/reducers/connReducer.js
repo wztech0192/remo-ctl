@@ -1,7 +1,6 @@
 import {
   ON_CONNECTION_SUCCESS,
   ON_CONNECTION_STOP,
-  ON_CONNECTION_FAIL,
   SET_CONN_PROPERTY,
   SET_OUTPUT
 } from 'store/enums';
@@ -10,6 +9,7 @@ const defaultState = {
   ws: null,
   offline: false,
   isConnected: false,
+  modalOpen: false,
   output: ''
 };
 
@@ -22,11 +22,11 @@ export default (state = defaultState, action) => {
         isConnected: true,
         loading: false
       };
-    case ON_CONNECTION_FAIL:
     case ON_CONNECTION_STOP:
       return {
         ...state,
         ws: null,
+        modalOpen: !action.noModal && (!state.isConnected && !state.offline),
         isConnected: false,
         loading: false,
         offline: false

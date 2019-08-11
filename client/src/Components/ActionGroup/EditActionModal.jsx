@@ -11,11 +11,20 @@ import Textfield from '@material-ui/core/TextField';
 export default class extends Component {
   state = {
     titleError: false,
-    cmdError: false
+    cmdError: false,
+    title: '',
+    cmd: '',
+    btn: null
   };
 
   componentWillReceiveProps(newProps) {
-    this.setState({ title: newProps.btn.title, cmd: newProps.btn.cmd });
+    if (newProps.btn) {
+      this.setState({
+        title: newProps.btn.title,
+        cmd: newProps.btn.cmd,
+        btn: newProps.btn
+      });
+    }
   }
 
   onInputChange = name => e => {
@@ -23,11 +32,11 @@ export default class extends Component {
   };
   validInput = () => {
     const { title, cmd } = this.state;
-    if (title === '') {
+    if (!title) {
       this.setState({ titleError: true });
       return;
     }
-    if (cmd === '') {
+    if (!cmd) {
       this.setState({ cmdError: true });
       return;
     }
@@ -36,11 +45,11 @@ export default class extends Component {
   };
 
   render() {
-    const { open, handleClose, btn } = this.props;
+    const { open, handleClose } = this.props;
     return (
       <Dialog open={open} onClose={handleClose} fullWidth>
         <DialogTitle style={{ color: 'rgb(0, 155, 160)' }}>
-          {btn.Icon} Customize Action
+          {this.state.btn && this.state.btn.Icon} Customize Action
         </DialogTitle>
         <DialogContent>
           <DialogContentText>
@@ -86,7 +95,9 @@ export default class extends Component {
           <Button onClick={this.validInput} color="primary">
             Save
           </Button>
-          <Button onClick={handleClose}>Cancel</Button>
+          <Button color="secondary" onClick={handleClose}>
+            Cancel
+          </Button>
         </DialogActions>
       </Dialog>
     );

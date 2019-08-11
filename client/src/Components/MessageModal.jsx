@@ -7,28 +7,27 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import { makeConnection } from 'store/actions/connAction';
-import { toggleModal } from 'store/actions/appAction';
+import { makeConnection, closeModal } from 'store/actions/connAction';
 
-const mapStateToProps = ({ app }) => ({
-  modalOpen: app.modalOpen
+const mapStateToProps = ({ conn }) => ({
+  modalOpen: conn.modalOpen
 });
 
 const mapDispatchToProps = {
   makeConnection,
-  toggleModal
+  closeModal
 };
 
 export class MessageModal extends PureComponent {
   handleClickOffline = () => {
     this.props.makeConnection('offline');
-    this.props.toggleModal();
+    this.props.closeModal();
   };
 
   render() {
-    const { modalOpen, toggleModal } = this.props;
+    const { modalOpen, closeModal } = this.props;
     return (
-      <Dialog open={modalOpen} onClose={toggleModal} fullWidth>
+      <Dialog open={modalOpen} onClose={closeModal} fullWidth>
         <DialogTitle style={{ color: 'rgb(0, 155, 160)' }}>
           Connection Failed!
         </DialogTitle>
@@ -41,7 +40,7 @@ export class MessageModal extends PureComponent {
           <Button onClick={this.handleClickOffline} color="primary">
             Go Offline
           </Button>
-          <Button onClick={toggleModal} color="primary">
+          <Button onClick={closeModal} color="primary">
             No
           </Button>
         </DialogActions>

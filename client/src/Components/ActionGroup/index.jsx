@@ -45,6 +45,7 @@ class ActionGroupIndex extends PureComponent {
   };
 
   getCustCmd = (name, defaultCMD) => {
+    console.log(name);
     let cmd = cookies.get(name);
     return cmd ? cmd : defaultCMD ? defaultCMD : 'n/a';
   };
@@ -118,7 +119,7 @@ class ActionGroupIndex extends PureComponent {
       {
         key: 'cus0',
         title: this.getCustTitle('cus0', 'Use Browser'),
-        cmd: this.getCustCmd('cb0f', 'start www.google.com'),
+        cmd: this.getCustCmd('cus0f', 'start www.google.com'),
         func: this.getCustFunc,
         Icon: <WebIcon />
       },

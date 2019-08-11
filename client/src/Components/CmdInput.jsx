@@ -4,8 +4,9 @@ import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import { connect } from 'react-redux';
 import { output, send } from 'store/actions/connAction';
+import Typography from '@material-ui/core/Typography';
 
-const mapDispatchToProps = {};
+const mapDispatchToProps = { output, send };
 
 class CmdInput extends PureComponent {
   state = {
@@ -64,7 +65,7 @@ class CmdInput extends PureComponent {
             style={{ width: '100%', height: '100%' }}
             onClick={this.send}
           >
-            Send
+            <Typography color="textSecondary">Send</Typography>
           </Button>
         </Grid>
       </Grid>

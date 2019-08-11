@@ -13,6 +13,7 @@ import '@material/ripple/dist/mdc.ripple.css';
 import { connect } from 'react-redux';
 import { send } from 'store/actions/connAction';
 import { config } from 'tools';
+import Typography from '@material-ui/core/Typography';
 
 const mapDispatchToProps = { send };
 
@@ -97,7 +98,7 @@ class ControllerIndex extends PureComponent {
                 className={`${classes.mcbtn} mdc-ripple-surface`}
                 data-mdc-ripple-is-bounded
               >
-                LC
+                <Typography color="textSecondary">LC</Typography>
               </div>
             </Grid>
             <Grid item xs={12} className={classes.mouseclick}>
@@ -106,7 +107,7 @@ class ControllerIndex extends PureComponent {
                 className={`${classes.mcbtn} mdc-ripple-surface`}
                 data-mdc-ripple-is-bounded
               >
-                RC
+                <Typography color="textSecondary">RC</Typography>
               </div>
             </Grid>
           </Grid>

@@ -1,33 +1,39 @@
 import {
   ON_CONNECTION_SUCCESS,
-  ON_CONNECTION_FAIL,
   ON_CONNECTION_STOP,
   SET_CONN_PROPERTY,
   SET_OUTPUT
 } from 'store/enums';
 import { gameConnector } from 'tools';
 
+let wsQueue = [];
 export const makeConnection = ip => (dispatch, getState) => {
-  if (getState().conn.loading) return null;
+  if (getState().conn.loading) {
+    wsQueue[wsQueue.length - 1].cancel = true;
+    dispatch({ type: ON_CONNECTION_STOP, noModal: true });
+    return;
+  }
+
   if (ip.toLowerCase() === 'offline') {
     return dispatch({ type: SET_CONN_PROPERTY, key: 'offline', payload: true });
   }
+
   dispatch({ type: SET_CONN_PROPERTY, key: 'loading', payload: true });
-  let ws = null;
-  if (ip.includes('wss://')) {
-    ws = new WebSocket(ip);
-  } else {
-    ws = new WebSocket('ws://' + ip);
-  }
+  let ws = new WebSocket(ip.includes('wss://') ? ip : 'ws://' + ip);
+  wsQueue.push(ws);
   ws.onopen = e => {
     dispatch({ type: ON_CONNECTION_SUCCESS, ws });
   }; //on open event
 
   ws.onclose = e => {
-    /*  console.log('close');
-    console.log(e);*/
-    dispatch({ type: ON_CONNECTION_STOP });
+    wsQueue.pop();
+    if (!ws.cancel) {
+      dispatch({ type: ON_CONNECTION_STOP });
+    }
+    ws = null;
   }; //on close event
+
+  ws.onerror = e => {};
 
   ws.onmessage = msg => {
     if (msg.data !== undefined && msg.data !== '') {
@@ -51,16 +57,19 @@ export const makeConnection = ip => (dispatch, getState) => {
       }
     }
   };
-  ws.onerror = e => {
-    dispatch({ type: ON_CONNECTION_FAIL });
-  }; //on error event
 };
 
 export const output = msg => dispatch =>
   dispatch({ type: SET_OUTPUT, output: msg });
 
-export const disconnect = () => dispatch =>
-  dispatch({ type: ON_CONNECTION_STOP });
+export const disconnect = () => (dispatch, getState) => {
+  const ws = getState().conn.ws;
+  if (ws) {
+    ws.close();
+  } else {
+    dispatch({ type: ON_CONNECTION_STOP });
+  }
+};
 
 export const send = (type, actions) => (dispatch, getState) => {
   const { conn, app } = getState();
@@ -70,3 +79,10 @@ export const send = (type, actions) => (dispatch, getState) => {
     conn.ws.send(type + '&' + actions.join('&')); //send method
   }
 };
+
+export const closeModal = () => dispatch =>
+  dispatch({
+    type: SET_CONN_PROPERTY,
+    key: 'modalOpen',
+    payload: false
+  });
