@@ -45,7 +45,6 @@ class ActionGroupIndex extends PureComponent {
   };
 
   getCustCmd = (name, defaultCMD) => {
-    console.log(name);
     let cmd = cookies.get(name);
     return cmd ? cmd : defaultCMD ? defaultCMD : 'n/a';
   };
@@ -74,13 +73,13 @@ class ActionGroupIndex extends PureComponent {
       {
         title: 'Toggle Console Window',
         func: btn => {
-          if (btn.isActive) {
+          this.toggleFuncBtnActive(btn);
+          if (!btn.isActive) {
             this.props.output('***Display Console Window***');
           } else {
             this.props.output('***Hide Console Window***');
           }
           this.props.send('cmd', ['TOGGLE']);
-          this.toggleFuncBtnActive(btn);
         },
 
         Icon: <VisibileIcon />,
@@ -89,13 +88,13 @@ class ActionGroupIndex extends PureComponent {
       {
         title: 'Lock/Unlock',
         func: btn => {
-          if (btn.isActive) {
+          this.toggleFuncBtnActive(btn);
+          if (!btn.isActive) {
             this.props.output('***Lock Target Mouse***');
           } else {
             this.props.output('***Unlock Target Mouse***');
           }
           this.props.send('cmd', ['LOCK']);
-          this.toggleFuncBtnActive(btn);
         },
         Icon: <LockIcon />,
         isActive: false
@@ -103,13 +102,13 @@ class ActionGroupIndex extends PureComponent {
       {
         title: 'Fullscreen Controller',
         func: btn => {
-          if (btn.isActive) {
+          this.toggleFuncBtnActive(btn);
+          if (!btn.isActive) {
             this.props.output('***Active Fullscreen***');
           } else {
             this.props.output('***Disable Fullscreen***');
           }
           this.props.toggleFullScreen();
-          this.toggleFuncBtnActive(btn);
         },
         Icon: <FullscreenIcon />,
         isActive: false

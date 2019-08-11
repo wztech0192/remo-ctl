@@ -1,5 +1,5 @@
 {
-    "extends": "restaruant-app",
+    "extends": "remo",
     "plugins": [
         "prettier"
     ],

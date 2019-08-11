@@ -41,7 +41,9 @@ class Entry extends PureComponent {
         this.props.makeConnection('offline');
         break;
       case 'Remote Control':
-        window.prompt('Remote Server Password Required:');
+        if (window.prompt('Remote Server Password Required:')) {
+          alert('Wrong password');
+        }
         break;
       default:
     }
