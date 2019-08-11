@@ -1,4 +1,4 @@
-# RemoCTL
+# Remo
 Control your PC's keyboard, mouse, and cmd via the browser dashboard! The connection is established locally thourgh LAN, or remotely through backend service!
 
 ## Local User Guide
