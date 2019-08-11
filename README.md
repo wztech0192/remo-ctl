@@ -15,3 +15,6 @@ Control your PC's keyboard, mouse, and cmd via the browser dashboard! The connec
 ## Dependency
 * .Net Framework
 * Modern Browser
+
+## Author
+Wei Zheng, fullstack developer
