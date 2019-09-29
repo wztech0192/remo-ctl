@@ -43,14 +43,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Remo Conn.exe" size="604664">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Remo Conn.exe" size="605688">
       <assemblyIdentity name="Remo Conn" version="1.0.0.0" publicKeyToken="1B52A03EA0AE5C53" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>uVatem6hh6+w293cH8Gn8Wwy4zUj1XqmjjVVpg+0ZYM=</dsig:DigestValue>
+        <dsig:DigestValue>XCFTdhm/FEWCp0fCqOxEshavYepFoeA8JY3bWdipJRc=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

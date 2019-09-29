@@ -11,3 +11,16 @@ C:\Users\Wei Zheng\source\repos\Control\LocalConn\obj\Production\Remo Conn.exe.m
 C:\Users\Wei Zheng\source\repos\Control\LocalConn\obj\Production\Remo Conn.application
 C:\Users\Wei Zheng\source\repos\Control\LocalConn\obj\Production\RemoConn.csproj.CopyComplete
 C:\Users\Wei Zheng\source\repos\Control\LocalConn\obj\Production\Remo Conn.exe
+C:\Users\Wei Zheng\Desktop\Project\remo-ctl\connector\bin\Production\Remo Conn.exe.config
+C:\Users\Wei Zheng\Desktop\Project\remo-ctl\connector\bin\Production\Remo Conn.exe.manifest
+C:\Users\Wei Zheng\Desktop\Project\remo-ctl\connector\bin\Production\Remo Conn.application
+C:\Users\Wei Zheng\Desktop\Project\remo-ctl\connector\bin\Production\Remo Conn.exe
+C:\Users\Wei Zheng\Desktop\Project\remo-ctl\connector\bin\Production\websocket-sharp.dll
+C:\Users\Wei Zheng\Desktop\Project\remo-ctl\connector\obj\Production\RemoConn.Properties.Resources.resources
+C:\Users\Wei Zheng\Desktop\Project\remo-ctl\connector\obj\Production\RemoConn.csproj.GenerateResource.cache
+C:\Users\Wei Zheng\Desktop\Project\remo-ctl\connector\obj\Production\RemoConn.csproj.CoreCompileInputs.cache
+C:\Users\Wei Zheng\Desktop\Project\remo-ctl\connector\obj\Production\Remo Conn.TrustInfo.xml
+C:\Users\Wei Zheng\Desktop\Project\remo-ctl\connector\obj\Production\Remo Conn.exe.manifest
+C:\Users\Wei Zheng\Desktop\Project\remo-ctl\connector\obj\Production\Remo Conn.application
+C:\Users\Wei Zheng\Desktop\Project\remo-ctl\connector\obj\Production\RemoConn.csproj.CopyComplete
+C:\Users\Wei Zheng\Desktop\Project\remo-ctl\connector\obj\Production\Remo Conn.exe

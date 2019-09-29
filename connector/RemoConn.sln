@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2048
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoConn", "RemoConn.csproj", "{6727E87C-49B2-4F18-872A-2DBE62ADECE7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Production|Any CPU = Production|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6727E87C-49B2-4F18-872A-2DBE62ADECE7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6727E87C-49B2-4F18-872A-2DBE62ADECE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6727E87C-49B2-4F18-872A-2DBE62ADECE7}.Production|Any CPU.ActiveCfg = Production|Any CPU
+		{6727E87C-49B2-4F18-872A-2DBE62ADECE7}.Production|Any CPU.Build.0 = Production|Any CPU
+		{6727E87C-49B2-4F18-872A-2DBE62ADECE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6727E87C-49B2-4F18-872A-2DBE62ADECE7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A0311CD3-5CC3-4911-91FC-7A43F25F48B4}
+	EndGlobalSection
+EndGlobal

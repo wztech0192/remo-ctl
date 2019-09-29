@@ -7,7 +7,7 @@ import {
 import { gameConnector } from 'tools';
 
 let wsQueue = [];
-export const makeConnection = ip => (dispatch, getState) => {
+export const makeConnection = (ip, server) => (dispatch, getState) => {
   if (getState().conn.loading) {
     wsQueue[wsQueue.length - 1].cancel = true;
     dispatch({ type: ON_CONNECTION_STOP, noModal: true });
@@ -23,6 +23,10 @@ export const makeConnection = ip => (dispatch, getState) => {
   wsQueue.push(ws);
   ws.onopen = e => {
     dispatch({ type: ON_CONNECTION_SUCCESS, ws });
+    if (server) {
+      //handshake with server
+      send('hs', ['controller'])(null, () => ({ app: {}, conn: { ws } }));
+    }
   }; //on open event
 
   ws.onclose = e => {

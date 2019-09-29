@@ -6,6 +6,7 @@ using System.Reflection;
 using WebSocketSharp.Server;
 using System.Net;
 using System.Net.Sockets;
+using WebSocketSharp;
 
 namespace LocalConn
 {
@@ -32,20 +33,66 @@ namespace LocalConn
 
         private void Init()
         {
+            bool isLocal = true;
             IntPtr ConsoleWindow = Process.GetCurrentProcess().MainWindowHandle;
+            string cmd = "";
             //  ShowWindow(h, display);
-            var wssv = new WebSocketServer(Port);
-            wssv.AddWebSocketService("/", ()=>new Receiver(ConsoleWindow));
-            wssv.Start();
+            Receiver receiver = new Receiver(ConsoleWindow);
+            WebSocketServer local = SetLocalServer(ConsoleWindow);
+            WebSocket remote = SetRemoteClient(ConsoleWindow);
+            
             do
             {
-                Console.WriteLine("Try the following IP Addres in your browser dashboard!");
-                PrintIP();
+                if(cmd == "local" && !isLocal) {
+                    isLocal = true;
+                    remote.Close();
+                    local.AddWebSocketService("/", () => new Receiver(ConsoleWindow));
+                    local.Start();
+                }
+                else if(cmd == "remote" && isLocal)
+                {
+                    isLocal = false;
+                    local.Stop();
+                    remote.Connect();
+                    remote.Send("hs");
+                }
+
+                if (isLocal)
+                {
+                    Console.WriteLine("Try the following IP Addres in your browser dashboard!");
+                    PrintIP();
+                    Console.WriteLine("Type \"Remote\" to connect to the remote server");
+                }
+                else
+                {
+                    Console.WriteLine("Remote Server Mode");
+                    Console.WriteLine("Type \"Local\" to switch back to local");
+                }
                 Console.WriteLine("Type \"Quit\" to exit the app");
                 Console.WriteLine("***************************");
-            } while (Console.ReadLine().ToLower() != "quit");
-         
-            wssv.Stop();
+            } while (( cmd = Console.ReadLine().ToLower() )!= "quit");
+
+            if (local != null)
+            {
+                local.Stop();
+            }
+        }
+
+        private WebSocketServer SetLocalServer(IntPtr ConsoleWindow)
+        {
+            var wssv = new WebSocketServer(Port);
+            wssv.AddWebSocketService("/", () => new Receiver(ConsoleWindow));
+            wssv.Start();
+            return wssv;
+        }
+
+        private WebSocket SetRemoteClient(IntPtr ConsoleWindow)
+        {
+            string server = "ws://142.11.215.231:1998";
+            var ws = new WebSocket(server);
+            var receiver = new Receiver(ConsoleWindow);
+            ws.OnMessage += (sender, e) => receiver.Handler(e.Data);
+            return ws;
         }
 
         private void PrintIP()
