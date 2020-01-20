@@ -1,6 +1,9 @@
 # Remo
 Control your PC's keyboard, mouse, and cmd via the browser dashboard! The connection is established locally thourgh LAN, or remotely through backend service!
 
+# Demo
+Click [here](http://www.wztechs.com/remo/)
+
 ## Local User Guide
 * In PC end, download the Remo Conn.exe in Remo entry page and run the application
 * Follow the connector interface to obtain IP address
