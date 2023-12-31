@@ -1,7 +1,7 @@
 {
   "name": "client",
   "version": "0.1.0",
-  "homepage": "/",
+  "homepage": "/remo",
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.0.2",

@@ -128,7 +128,7 @@ namespace LocalConn
             }
 
             var qrGen = new QRCodeGenerator();
-            var qrCodeData = qrGen.CreateQrCode($"https://remo.wztechs.com/?ip={targetIp}", QRCodeGenerator.ECCLevel.Q);
+            var qrCodeData = qrGen.CreateQrCode($"http://wztechs.com/remo?ip={targetIp}", QRCodeGenerator.ECCLevel.Q);
             var qrCode = new AsciiQRCode(qrCodeData);
             var lines = qrCode.GetLineByLineGraphic(1, "1", "0", false);
 
