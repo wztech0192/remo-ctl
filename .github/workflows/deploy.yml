@@ -35,11 +35,11 @@ jobs:
         with:
           args: --acl public-read --follow-symlinks --delete
         env:
-          AWS_S3_BUCKET: content-shared-app-bucket # Replace with your S3 Bucket name
+          AWS_S3_BUCKET: remo-ctl # Replace with your S3 Bucket name
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: 'us-east-1' # Or your AWS region
-          SOURCE_DIR: 'client/dist'
+          SOURCE_DIR: 'client/build'
 
       - name: Invalidate CloudFront Distribution
         uses: chetan/invalidate-cloudfront-action@v2
