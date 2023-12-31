@@ -120,6 +120,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="IDBS-Connect-Icon-e1491470413855.ico" />
+    <EmbeddedResource Include="lib\QRCoder.dll" />
     <EmbeddedResource Include="lib\websocket-sharp.dll" />
     <EmbeddedResource Include="Properties\Resources.resx" />
   </ItemGroup>

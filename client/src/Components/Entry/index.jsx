@@ -16,6 +16,7 @@ import InputIcon from '@material-ui/icons/MoreVert';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import EntryMenu from './EntryMenu';
+import RemoExe from '../../static/RemoConn.exe'
 
 const mapStateToProps = state => ({
   loading: state.conn.loading,
@@ -140,7 +141,7 @@ class Entry extends PureComponent {
             {loading ? 'Cancel Connection' : 'Connect'}
           </Fab>
           <br />
-          <Link href="Remo Conn.exe" download className={classes.link}>
+          <Link href={RemoExe} download className={classes.link}>
             Download Connector
           </Link>
           <Typography

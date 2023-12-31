@@ -5,6 +5,8 @@ using WebSocketSharp.Server;
 using System.Net;
 using System.Net.Sockets;
 using WebSocketSharp;
+using System.Net.NetworkInformation;
+using QRCoder;
 
 namespace LocalConn
 {
@@ -29,8 +31,11 @@ namespace LocalConn
             Init();
         }
 
+        private string QrCode { get; set; } = null;
+
         private void Init()
         {
+            Console.SetWindowSize(120, 44);
             bool isLocal = true;
             IntPtr ConsoleWindow = Process.GetCurrentProcess().MainWindowHandle;
             string cmd = "";
@@ -96,6 +101,8 @@ namespace LocalConn
         private void PrintIP()
         {
             Console.WriteLine("***************************");
+
+            var targetIp = "";
             string hostName = Dns.GetHostName(); // Retrive the Name of HOST  
             // Get the IP  
             var host = Dns.GetHostEntry(hostName);
@@ -103,10 +110,32 @@ namespace LocalConn
             {
                 if (ip.AddressFamily == AddressFamily.InterNetwork)
                 {
-                    Console.WriteLine(ip+":"+Port);
+                    targetIp = ip + ":" + Port;
+                    Console.WriteLine(targetIp);
                 }
             }
             Console.WriteLine("***************************");
+            Console.WriteLine($"--- QR Code for {targetIp} ---");
+
+            Console.WriteLine(GetQrCode(targetIp));
+
+            Console.WriteLine("***************************");
+        }
+
+        private string GetQrCode(string targetIp)
+        {
+            if (!string.IsNullOrEmpty(QrCode))
+            {
+                return QrCode;
+            }
+
+            var qrGen = new QRCodeGenerator();
+            var qrCodeData = qrGen.CreateQrCode($"https://remo.wztechs.com/?ip={targetIp}", QRCodeGenerator.ECCLevel.Q);
+            var qrCode = new AsciiQRCode(qrCodeData);
+            QrCode = qrCode.GetGraphic(1, drawQuietZones: false);
+
+            return QrCode;
+
         }
     }
 }
