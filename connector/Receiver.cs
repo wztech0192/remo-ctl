@@ -17,7 +17,6 @@ namespace LocalConn
         [DllImport("user32.dll")]
         public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
-        DateTime lastTime = DateTime.Now;
         //Mouse actions
         private readonly int MOUSEEVENTF_LEFTDOWN = 0x02;
         private readonly int MOUSEEVENTF_LEFTUP = 0x04;

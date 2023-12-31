@@ -1,7 +1,7 @@
 {
   "name": "client",
   "version": "0.1.0",
-  "homepage": "/remo",
+  "homepage": "/",
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.0.2",
@@ -13,13 +13,15 @@
     "react-redux": "^7.1.0",
     "react-scripts": "3.0.1",
     "redux": "^4.0.4",
+    "redux-thunk": "^2.3.0",
     "universal-cookie": "^4.0.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "custom-react-script": "react-scripts --openssl-legacy-provider",
+    "start": "npm run custom-react-script start",
+    "build": "npm run custom-react-script build",
+    "test": "npm run custom-react-script test",
+    "eject": "npm run custom-react-script eject"
   },
   "eslintConfig": {
     "extends": "react-app"

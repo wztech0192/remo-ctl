@@ -26,7 +26,7 @@ const mapDispatchToProps = { makeConnection };
 
 class Entry extends PureComponent {
   state = {
-    ip: cookies.get('ip') || '',
+    ip: new URLSearchParams( window.location.search).get("ip") || cookies.get('ip') || '',
     error: null,
     anchorEl: null,
     openMenu: false
