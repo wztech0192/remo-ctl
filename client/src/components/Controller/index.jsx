@@ -1,6 +1,5 @@
 import React, { PureComponent } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import Textfield from '@material-ui/core/Textfield';
 import TouchEvent from './TouchEvent';
 import MotionEvent from './MotionEvent';
 import Tabs from '@material-ui/core/Tabs';
@@ -14,6 +13,7 @@ import { connect } from 'react-redux';
 import { send } from 'store/actions/connAction';
 import { config } from 'tools';
 import Typography from '@material-ui/core/Typography';
+import TextField from '@material-ui/core/TextField';
 
 const mapDispatchToProps = { send };
 
@@ -118,7 +118,7 @@ class ControllerIndex extends PureComponent {
         ) : (
           <MotionEvent allRefs={allRefs} send={send} config={config} />
         )}
-        <Textfield
+        <TextField
           className={classes.keyboard}
           placeholder="Keyboard"
           value=""

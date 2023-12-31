@@ -5,7 +5,6 @@ using WebSocketSharp.Server;
 using System.Net;
 using System.Net.Sockets;
 using WebSocketSharp;
-using System.Net.NetworkInformation;
 using QRCoder;
 
 namespace LocalConn
@@ -35,7 +34,6 @@ namespace LocalConn
 
         private void Init()
         {
-            Console.SetWindowSize(120, 44);
             bool isLocal = true;
             IntPtr ConsoleWindow = Process.GetCurrentProcess().MainWindowHandle;
             string cmd = "";
@@ -117,7 +115,7 @@ namespace LocalConn
             Console.WriteLine("***************************");
             Console.WriteLine($"--- QR Code for {targetIp} ---");
 
-            Console.WriteLine(GetQrCode(targetIp));
+            Console.WriteLine("\n" + GetQrCode(targetIp));
 
             Console.WriteLine("***************************");
         }
@@ -132,7 +130,45 @@ namespace LocalConn
             var qrGen = new QRCodeGenerator();
             var qrCodeData = qrGen.CreateQrCode($"https://remo.wztechs.com/?ip={targetIp}", QRCodeGenerator.ECCLevel.Q);
             var qrCode = new AsciiQRCode(qrCodeData);
-            QrCode = qrCode.GetGraphic(1, drawQuietZones: false);
+            var lines = qrCode.GetLineByLineGraphic(1, "1", "0", false);
+
+            // shrink qr code
+            // ▀
+            // ▄
+            // █
+            QrCode += "\t";
+            for (var i = 0; i < lines.Length; i += 2)
+            {
+                for(var j = 0; j < lines[i].Length; j++)
+                {
+                    var isThisLineEmpty = lines[i][j] == '0';
+                    var isNextLineEmpty = i == lines.Length - 1 || lines[i + 1][j] == '0';
+
+                    if (isThisLineEmpty)
+                    {
+                        if (isNextLineEmpty)
+                        {
+                            QrCode += " ";
+                        }
+                        else
+                        {
+                            QrCode += "▄";
+                        }
+                    }
+                    else
+                    {
+                        if (isNextLineEmpty)
+                        {
+                            QrCode += "▀";
+                        }
+                        else
+                        {
+                            QrCode += "█";
+                        }
+                    }
+                }
+                QrCode += Environment.NewLine + "\t";
+            }
 
             return QrCode;
 

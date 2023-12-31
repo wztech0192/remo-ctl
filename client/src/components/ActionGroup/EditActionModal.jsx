@@ -56,9 +56,9 @@ export default class extends Component {
             <Typography variant="caption">
               Customizing cmd actions e.g.
               <br />
-              "start url" => website
+              "start url" =&gt; website
               <br />
-              "shutdown /s" => shutdown pc
+              "shutdown /s" =&gt; shutdown pc
             </Typography>
           </DialogContentText>
 
